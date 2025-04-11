@@ -272,8 +272,9 @@ function App() {
               <p>No deals found matching your criteria.</p>
               {location.lat && location.lng ? (
                 <div>
-                  <p>No deals found near your selected location.</p>
-                  <p>Try searching in "Jayanagar, Bengaluru" or "San Francisco, CA" where we have sample deals.</p>
+                  <p>No deals found within {filter.radius} miles of your selected location.</p>
+                  <p>Try these exact searches: "Jayanagar 2nd Block, Bengaluru" or "San Francisco, CA" where we have sample deals.</p>
+                  <p>Current search location: {locationInput} (coordinates: {location.lat}, {location.lng})</p>
                 </div>
               ) : (
                 <p>Try entering a location or adjusting your filters.</p>
