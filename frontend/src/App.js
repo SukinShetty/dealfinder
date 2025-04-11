@@ -322,10 +322,20 @@ function App() {
                     {(deal.original_price || deal.sale_price) && (
                       <div className="deal-prices">
                         {deal.original_price && (
-                          <span className="original-price">${deal.original_price.toFixed(2)}</span>
+                          <span className="original-price">
+                            {currency === "USD" && "$"}
+                            {currency === "EUR" && "€"}
+                            {currency === "INR" && "₹"}
+                            {deal.original_price.toFixed(2)}
+                          </span>
                         )}
                         {deal.sale_price && (
-                          <span className="sale-price">${deal.sale_price.toFixed(2)}</span>
+                          <span className="sale-price">
+                            {currency === "USD" && "$"}
+                            {currency === "EUR" && "€"}
+                            {currency === "INR" && "₹"}
+                            {deal.sale_price.toFixed(2)}
+                          </span>
                         )}
                       </div>
                     )}
