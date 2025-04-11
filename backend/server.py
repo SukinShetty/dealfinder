@@ -225,7 +225,7 @@ async def generate_sample_deals():
             "sale_price": 12.5,
             "expiration_date": datetime(2025, 4, 15),
             "image_url": "https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://example-restaurant.com/deals/bogo-pizza"
+            "url": "https://www.google.com/search?q=Pizza+Paradise+buy+one+get+one+San+Francisco"
         },
         {
             "title": "30% Off All Electronics",
