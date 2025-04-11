@@ -107,9 +107,28 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold">Real-Time Local Deal Finder</h1>
-          <p className="text-lg mt-2">Find the best local deals near you</p>
+        <div className="container mx-auto px-4 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Real-Time Local Deal Finder</h1>
+            <p className="text-lg mt-2">Find the best local deals near you</p>
+          </div>
+          {NotificationManager.isSupported() && (
+            <button 
+              onClick={async () => {
+                const permission = await NotificationManager.requestPermission();
+                setNotificationsEnabled(permission);
+                if (permission) {
+                  // Show a success notification
+                  new Notification("Notifications Enabled", {
+                    body: "You'll now receive alerts for new deals near you!"
+                  });
+                }
+              }}
+              className={`notification-button ${notificationsEnabled ? 'enabled' : ''}`}
+            >
+              {notificationsEnabled ? "Notifications On" : "Enable Notifications"}
+            </button>
+          )}
         </div>
       </header>
       
