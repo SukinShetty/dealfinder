@@ -276,7 +276,7 @@ async def generate_sample_deals():
             "sale_price": 40.0,
             "expiration_date": datetime(2025, 6, 1),
             "image_url": "https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://example-retail.com/deals/book-promotion"
+            "url": "https://www.google.com/search?q=Book+Haven+free+book+promotion"
         },
         
         # Bengaluru Deals (Jayanagar)
