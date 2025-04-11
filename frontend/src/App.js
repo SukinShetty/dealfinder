@@ -48,7 +48,14 @@ function App() {
       }
       
       const data = await response.json();
-      setDeals(data);
+      
+      // Ensure deals are unique by ID
+      const uniqueDeals = {};
+      data.forEach(deal => {
+        uniqueDeals[deal.id] = deal;
+      });
+      
+      setDeals(Object.values(uniqueDeals));
       setLoading(false);
     } catch (err) {
       console.error("Error fetching deals:", err);
