@@ -192,6 +192,7 @@ async def generate_sample_deals():
     Generate sample deals for testing purposes
     """
     sample_deals = [
+        # San Francisco Deals
         {
             "title": "50% Off All Clothing",
             "description": "Get 50% off all clothing items in store. Limited time offer!",
@@ -276,6 +277,76 @@ async def generate_sample_deals():
             "expiration_date": datetime(2025, 6, 1),
             "image_url": "https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
             "url": "https://example-retail.com/deals/book-promotion"
+        },
+        
+        # Bengaluru Deals (Jayanagar)
+        {
+            "title": "40% Off on All Clothing",
+            "description": "Special sale on all clothing items. Limited time only!",
+            "discount_percentage": 40.0,
+            "business_name": "Fashion Hub",
+            "category": "retail",
+            "location": {
+                "lat": 12.9259,
+                "lng": 77.5944,
+                "address": "11th Main Rd, 4th Block, Jayanagar, Bengaluru"
+            },
+            "original_price": 2000.0,
+            "sale_price": 1200.0,
+            "expiration_date": datetime(2025, 5, 10),
+            "image_url": "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+            "url": "https://example-retail.com/deals/bengaluru-clothing"
+        },
+        {
+            "title": "25% Off on Dosa Combos",
+            "description": "Enjoy 25% off on all dosa combos. Valid for dine-in and takeaway.",
+            "discount_percentage": 25.0,
+            "business_name": "South Indian Delight",
+            "category": "restaurant",
+            "location": {
+                "lat": 12.9245,
+                "lng": 77.5932,
+                "address": "30th Cross, Jayanagar 4th Block, Bengaluru"
+            },
+            "original_price": 250.0,
+            "sale_price": 187.5,
+            "expiration_date": datetime(2025, 4, 20),
+            "image_url": "https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+            "url": "https://example-restaurant.com/deals/bengaluru-dosa"
+        },
+        {
+            "title": "50% Off on Second Coffee",
+            "description": "Buy one coffee, get 50% off on the second one. Perfect for catch-ups!",
+            "discount_percentage": 50.0,
+            "business_name": "Coffee Culture",
+            "category": "restaurant",
+            "location": {
+                "lat": 12.9280,
+                "lng": 77.5968,
+                "address": "Cool Joint Rd, Jayanagar 7th Block, Bengaluru"
+            },
+            "original_price": 180.0,
+            "sale_price": 90.0,
+            "expiration_date": datetime(2025, 5, 5),
+            "image_url": "https://images.unsplash.com/photo-1497935586047-9242eb4fc795?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+            "url": "https://example-restaurant.com/deals/bengaluru-coffee"
+        },
+        {
+            "title": "20% Off on All Electronics",
+            "description": "Special discount on all electronics including smartphones, laptops and accessories.",
+            "discount_percentage": 20.0,
+            "business_name": "Gadget Zone",
+            "category": "retail",
+            "location": {
+                "lat": 12.9271,
+                "lng": 77.5971,
+                "address": "Brigade Rd, Jayanagar 3rd Block, Bengaluru"
+            },
+            "original_price": 50000.0,
+            "sale_price": 40000.0,
+            "expiration_date": datetime(2025, 4, 25),
+            "image_url": "https://images.unsplash.com/photo-1550009158-9ebf69173e03?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+            "url": "https://example-retail.com/deals/bengaluru-electronics"
         }
     ]
     
