@@ -171,36 +171,25 @@ function App() {
             <h2 className="text-xl font-semibold mb-4">Find Deals Near You</h2>
             
             <form onSubmit={handleLocationSubmit} className="location-form mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label htmlFor="latitude" className="block text-sm font-medium text-gray-700 mb-1">
-                    Latitude
-                  </label>
-                  <input
-                    type="text"
-                    id="latitude"
-                    className="input-field"
-                    placeholder="e.g. 37.7749"
-                    value={location.lat}
-                    onChange={(e) => setLocation({ ...location, lat: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="longitude" className="block text-sm font-medium text-gray-700 mb-1">
-                    Longitude
-                  </label>
-                  <input
-                    type="text"
-                    id="longitude"
-                    className="input-field"
-                    placeholder="e.g. -122.4194"
-                    value={location.lng}
-                    onChange={(e) => setLocation({ ...location, lng: e.target.value })}
-                  />
-                </div>
+              <div className="mb-4">
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+                  Enter your location
+                </label>
+                <input
+                  type="text"
+                  id="location"
+                  className="input-field"
+                  placeholder="e.g. Jayanagar, Bengaluru"
+                  value={locationInput}
+                  onChange={(e) => setLocationInput(e.target.value)}
+                />
               </div>
-              <button type="submit" className="search-button">
-                Find Deals
+              <button 
+                type="submit" 
+                className="search-button"
+                disabled={isGeocoding}
+              >
+                {isGeocoding ? 'Searching...' : 'Find Deals'}
               </button>
             </form>
             
