@@ -8,9 +8,11 @@ function App() {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [locationInput, setLocationInput] = useState("");
   const [location, setLocation] = useState({ lat: "", lng: "" });
   const [filter, setFilter] = useState({ category: "all", radius: 5, minDiscount: 15 });
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [isGeocoding, setIsGeocoding] = useState(false);
 
   useEffect(() => {
     // Generate sample deals only if there's no data in our database yet
