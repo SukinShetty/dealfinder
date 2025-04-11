@@ -102,7 +102,7 @@ class DealFinderAPITester:
 
 def main():
     # Get backend URL from environment variable
-    backend_url = "https://484ff713-fe7c-4092-8908-e6296d7ea8df-backend.preview.emergentagent.com"
+    backend_url = "https://484ff713-fe7c-4092-8908-e6296d7ea8df-backend.preview.emergentagent.com/api"
     
     # Setup tester
     tester = DealFinderAPITester(backend_url)
