@@ -295,7 +295,7 @@ async def generate_sample_deals():
             "sale_price": 1200.0,
             "expiration_date": datetime(2025, 5, 10),
             "image_url": "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://example-retail.com/deals/bengaluru-clothing"
+            "url": "https://www.google.com/search?q=Fashion+Hub+clothing+discount+Jayanagar+Bengaluru"
         },
         {
             "title": "25% Off on Dosa Combos",
