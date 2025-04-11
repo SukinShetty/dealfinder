@@ -97,7 +97,7 @@ def main():
     success, all_deals = tester.test_get_all_deals()
     if success:
         # Check for duplicates
-        deal_ids = [deal["id"] for deal in all_deals["deals"]]
+        deal_ids = [deal["id"] for deal in all_deals]
         unique_ids = set(deal_ids)
         if len(deal_ids) != len(unique_ids):
             print("❌ Found duplicate deals!")
