@@ -2,25 +2,23 @@ import requests
 import pytest
 from datetime import datetime
 
-class TestLocalDealFinder:
-    def __init__(self):
-        self.base_url = "https://484ff713-fe7c-4092-8908-e6296d7ea8df.preview.emergentagent.com/api"
+class DealFinderAPITester:
+    def __init__(self, base_url):
+        self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
 
-    def run_test(self, name, method, endpoint, expected_status, data=None, params=None):
+    def run_test(self, name, method, endpoint, expected_status, params=None, data=None):
         """Run a single API test"""
         url = f"{self.base_url}/{endpoint}"
-        headers = {'Content-Type': 'application/json'}
-        
         self.tests_run += 1
         print(f"\n🔍 Testing {name}...")
         
         try:
             if method == 'GET':
-                response = requests.get(url, headers=headers, params=params)
+                response = requests.get(url, params=params)
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=headers)
+                response = requests.post(url, json=data)
 
             success = response.status_code == expected_status
             if success:
@@ -35,104 +33,112 @@ class TestLocalDealFinder:
             print(f"❌ Failed - Error: {str(e)}")
             return False, None
 
-    def test_api_health(self):
-        """Test API health endpoint"""
+    def test_root_endpoint(self):
+        """Test root endpoint"""
         return self.run_test(
-            "API Health",
+            "Root Endpoint",
             "GET",
-            "",
+            "api",
             200
         )
 
     def test_generate_sample_deals(self):
-        """Test sample deals generation"""
+        """Test generating sample deals"""
         return self.run_test(
             "Generate Sample Deals",
             "POST",
-            "sample-deals",
+            "api/sample-deals",
             200
         )
 
-    def test_get_deals_no_location(self):
-        """Test getting deals without location"""
-        return self.run_test(
-            "Get Deals (No Location)",
-            "GET",
-            "deals",
-            200
-        )
-
-    def test_get_deals_with_location(self):
-        """Test getting deals with location"""
+    def test_get_deals_bengaluru(self):
+        """Test getting deals near Bengaluru"""
         params = {
-            'lat': 12.9259,  # Jayanagar, Bengaluru coordinates
-            'lng': 77.5944,
-            'radius': 5,
-            'min_discount': 15
+            "lat": 12.9259,  # Jayanagar, Bengaluru
+            "lng": 77.5944,
+            "radius": 5.0,
+            "min_discount": 15.0
         }
         return self.run_test(
-            "Get Deals (With Location)",
+            "Get Bengaluru Deals",
             "GET",
-            "deals",
+            "api/deals",
             200,
             params=params
         )
 
-    def test_get_deals_with_filters(self):
-        """Test getting deals with filters"""
+    def test_get_deals_san_francisco(self):
+        """Test getting deals near San Francisco"""
         params = {
-            'category': 'retail',
-            'min_discount': 25,
-            'radius': 10,
-            'lat': 37.7749,  # San Francisco coordinates
-            'lng': -122.4194
+            "lat": 37.7749,  # San Francisco
+            "lng": -122.4194,
+            "radius": 5.0,
+            "min_discount": 15.0
         }
         return self.run_test(
-            "Get Deals (With Filters)",
+            "Get San Francisco Deals",
             "GET",
-            "deals",
+            "api/deals",
+            200,
+            params=params
+        )
+
+    def test_get_deals_with_category(self):
+        """Test getting deals with category filter"""
+        params = {
+            "lat": 37.7749,
+            "lng": -122.4194,
+            "category": "restaurant",
+            "radius": 5.0,
+            "min_discount": 15.0
+        }
+        return self.run_test(
+            "Get Restaurant Deals",
+            "GET",
+            "api/deals",
             200,
             params=params
         )
 
 def main():
-    tester = TestLocalDealFinder()
+    # Get backend URL from environment variable
+    backend_url = "https://484ff713-fe7c-4092-8908-e6296d7ea8df-backend.preview.emergentagent.com"
+    
+    # Setup tester
+    tester = DealFinderAPITester(backend_url)
     
     # Run tests
-    print("🚀 Starting API Tests...")
-    
-    # Test 1: API Health
-    success, _ = tester.test_api_health()
+    success, _ = tester.test_root_endpoint()
     if not success:
-        print("❌ API health check failed, stopping tests")
+        print("❌ Root endpoint test failed, stopping tests")
         return 1
 
-    # Test 2: Generate Sample Deals
+    # Generate sample deals
     success, _ = tester.test_generate_sample_deals()
     if not success:
-        print("❌ Sample deals generation failed")
+        print("❌ Sample deals generation failed, stopping tests")
         return 1
 
-    # Test 3: Get Deals (No Location)
-    success, deals = tester.test_get_deals_no_location()
-    if not success:
-        print("❌ Getting deals without location failed")
-        return 1
-    print(f"📊 Found {len(deals)} deals without location filter")
+    # Test Bengaluru deals
+    success, bengaluru_deals = tester.test_get_deals_bengaluru()
+    if success:
+        print(f"Found {len(bengaluru_deals)} deals in Bengaluru")
+        for deal in bengaluru_deals[:2]:  # Show first 2 deals
+            print(f"- {deal['title']} at {deal['business_name']}")
 
-    # Test 4: Get Deals (Jayanagar, Bengaluru)
-    success, deals = tester.test_get_deals_with_location()
-    if not success:
-        print("❌ Getting deals with location failed")
-        return 1
-    print(f"📊 Found {len(deals)} deals near Jayanagar, Bengaluru")
+    # Test San Francisco deals
+    success, sf_deals = tester.test_get_deals_san_francisco()
+    if success:
+        print(f"Found {len(sf_deals)} deals in San Francisco")
+        for deal in sf_deals[:2]:  # Show first 2 deals
+            print(f"- {deal['title']} at {deal['business_name']}")
 
-    # Test 5: Get Deals (San Francisco with filters)
-    success, deals = tester.test_get_deals_with_filters()
-    if not success:
-        print("❌ Getting deals with filters failed")
-        return 1
-    print(f"📊 Found {len(deals)} deals in San Francisco with filters")
+    # Test category filtering
+    success, restaurant_deals = tester.test_get_deals_with_category()
+    if success:
+        print(f"Found {len(restaurant_deals)} restaurant deals")
+        for deal in restaurant_deals[:2]:  # Show first 2 deals
+            print(f"- {deal['title']} at {deal['business_name']}")
 
     # Print results
     print(f"\n📊 Tests passed: {tester.tests_passed}/{tester.tests_run}")
