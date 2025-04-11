@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import NotificationManager from "./NotificationManager";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
