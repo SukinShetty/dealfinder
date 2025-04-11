@@ -13,6 +13,7 @@ function App() {
   const [filter, setFilter] = useState({ category: "all", radius: 5, minDiscount: 15 });
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [isGeocoding, setIsGeocoding] = useState(false);
+  const [currency, setCurrency] = useState("USD");
 
   useEffect(() => {
     // Generate sample deals only if there's no data in our database yet
