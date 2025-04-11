@@ -10,6 +10,7 @@ function App() {
   const [error, setError] = useState(null);
   const [location, setLocation] = useState({ lat: "", lng: "" });
   const [filter, setFilter] = useState({ category: "all", radius: 5, minDiscount: 15 });
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
     // Generate sample deals only if there's no data in our database yet
