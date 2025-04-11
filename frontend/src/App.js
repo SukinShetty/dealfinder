@@ -270,7 +270,14 @@ function App() {
           ) : deals.length === 0 ? (
             <div className="no-deals-message">
               <p>No deals found matching your criteria.</p>
-              <p>Try adjusting your filters or location.</p>
+              {location.lat && location.lng ? (
+                <div>
+                  <p>No deals found near your selected location.</p>
+                  <p>Try searching in "Jayanagar, Bengaluru" or "San Francisco, CA" where we have sample deals.</p>
+                </div>
+              ) : (
+                <p>Try entering a location or adjusting your filters.</p>
+              )}
             </div>
           ) : (
             <div className="deals-grid">
