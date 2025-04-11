@@ -294,6 +294,23 @@ async def generate_sample_deals():
 async def root():
     return {"message": "Welcome to the Real-Time Local Deal Finder API"}
 
+# Helper function to convert MongoDB documents to JSON-serializable objects
+def serialize_deal(deal: Dict[str, Any]) -> Dict[str, Any]:
+    if deal.get("_id"):
+        deal["id"] = str(deal["_id"])
+        del deal["_id"]
+    
+    # Convert any nested ObjectIds
+    for key, value in deal.items():
+        if isinstance(value, ObjectId):
+            deal[key] = str(value)
+        elif isinstance(value, dict):
+            deal[key] = serialize_deal(value)
+        elif isinstance(value, list):
+            deal[key] = [serialize_deal(item) if isinstance(item, dict) else item for item in value]
+    
+    return deal
+
 @app.get("/api/deals")
 async def get_deals(
     lat: float = Query(None, description="User's latitude"),
@@ -316,10 +333,13 @@ async def get_deals(
         cursor = db.deals.find(query)
         deals = await cursor.to_list(length=100)
         
+        # Convert documents to JSON-serializable objects
+        serialized_deals = [serialize_deal(deal) for deal in deals]
+        
         # Filter by distance if location is provided
         if lat is not None and lng is not None:
             filtered_deals = []
-            for deal in deals:
+            for deal in serialized_deals:
                 deal_lat = deal["location"]["lat"]
                 deal_lng = deal["location"]["lng"]
                 distance = calculate_distance(lat, lng, deal_lat, deal_lng)
@@ -333,7 +353,7 @@ async def get_deals(
             filtered_deals.sort(key=lambda x: x["distance"])
             return filtered_deals
         
-        return deals
+        return serialized_deals
     
     except Exception as e:
         logger.error(f"Error getting deals: {e}")
