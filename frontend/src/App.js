@@ -194,7 +194,7 @@ function App() {
               </button>
             </form>
             
-            <div className="filters grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="filters grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
                   Category
@@ -243,6 +243,22 @@ function App() {
                   <option value="25">25% or more</option>
                   <option value="50">50% or more</option>
                   <option value="75">75% or more</option>
+                </select>
+              </div>
+              
+              <div>
+                <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-1">
+                  Currency
+                </label>
+                <select
+                  id="currency"
+                  className="select-field"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                >
+                  <option value="USD">USD ($)</option>
+                  <option value="INR">INR (₹)</option>
+                  <option value="EUR">EUR (€)</option>
                 </select>
               </div>
             </div>
