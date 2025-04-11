@@ -79,9 +79,40 @@ function App() {
     }
   };
 
-  const handleLocationSubmit = (e) => {
+  const handleLocationSubmit = async (e) => {
     e.preventDefault();
-    fetchDeals();
+    
+    if (!locationInput.trim()) {
+      setError("Please enter a location");
+      return;
+    }
+    
+    try {
+      setIsGeocoding(true);
+      // Using the OpenStreetMap Nominatim API for geocoding (free and no API key required)
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationInput)}&limit=1`);
+      
+      if (!response.ok) {
+        throw new Error("Failed to geocode location");
+      }
+      
+      const data = await response.json();
+      
+      if (data.length === 0) {
+        setError("Location not found. Please try a different location.");
+        setIsGeocoding(false);
+        return;
+      }
+      
+      const { lat, lon } = data[0];
+      setLocation({ lat, lng: lon });
+      setIsGeocoding(false);
+      fetchDeals();
+    } catch (err) {
+      console.error("Geocoding error:", err);
+      setError("Failed to find coordinates for this location. Please try again.");
+      setIsGeocoding(false);
+    }
   };
 
   const handleCategoryChange = (e) => {
