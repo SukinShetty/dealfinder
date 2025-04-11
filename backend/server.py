@@ -287,9 +287,9 @@ async def generate_sample_deals():
             "business_name": "Fashion Hub",
             "category": "retail",
             "location": {
-                "lat": 12.9259,
-                "lng": 77.5944,
-                "address": "11th Main Rd, 4th Block, Jayanagar, Bengaluru"
+                "lat": 12.9399039,
+                "lng": 77.5826382,
+                "address": "11th Main Rd, 2nd Block, Jayanagar, Bengaluru"
             },
             "original_price": 2000.0,
             "sale_price": 1200.0,
@@ -304,9 +304,9 @@ async def generate_sample_deals():
             "business_name": "South Indian Delight",
             "category": "restaurant",
             "location": {
-                "lat": 12.9245,
-                "lng": 77.5932,
-                "address": "30th Cross, Jayanagar 4th Block, Bengaluru"
+                "lat": 12.9385,
+                "lng": 77.5832,
+                "address": "30th Cross, Jayanagar 2nd Block, Bengaluru"
             },
             "original_price": 250.0,
             "sale_price": 187.5,
@@ -321,9 +321,9 @@ async def generate_sample_deals():
             "business_name": "Coffee Culture",
             "category": "restaurant",
             "location": {
-                "lat": 12.9280,
-                "lng": 77.5968,
-                "address": "Cool Joint Rd, Jayanagar 7th Block, Bengaluru"
+                "lat": 12.9410,
+                "lng": 77.5815,
+                "address": "Cool Joint Rd, Jayanagar 2nd Block, Bengaluru"
             },
             "original_price": 180.0,
             "sale_price": 90.0,
@@ -338,9 +338,9 @@ async def generate_sample_deals():
             "business_name": "Gadget Zone",
             "category": "retail",
             "location": {
-                "lat": 12.9271,
-                "lng": 77.5971,
-                "address": "Brigade Rd, Jayanagar 3rd Block, Bengaluru"
+                "lat": 12.9395,
+                "lng": 77.5840,
+                "address": "Brigade Rd, Jayanagar 2nd Block, Bengaluru"
             },
             "original_price": 50000.0,
             "sale_price": 40000.0,
