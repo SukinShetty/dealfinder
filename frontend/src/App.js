@@ -137,6 +137,24 @@ function App() {
       day: 'numeric' 
     });
   };
+  
+  // Currency conversion helper
+  const formatPrice = (price, currencyCode) => {
+    let conversionRate = 1; // Default for USD
+    
+    if (currencyCode === "INR") {
+      conversionRate = 83.12; // 1 USD to INR (as of April 2025)
+    } else if (currencyCode === "EUR") {
+      conversionRate = 0.92; // 1 USD to EUR (as of April 2025)
+    }
+    
+    const convertedPrice = price * conversionRate;
+    
+    return {
+      symbol: currencyCode === "USD" ? "$" : currencyCode === "INR" ? "₹" : "€",
+      value: convertedPrice.toFixed(2)
+    };
+  };
 
   return (
     <div className="app-container">
