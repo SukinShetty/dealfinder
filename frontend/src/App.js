@@ -345,18 +345,14 @@ function App() {
                       <div className="deal-prices">
                         {deal.original_price && (
                           <span className="original-price">
-                            {currency === "USD" && "$"}
-                            {currency === "EUR" && "€"}
-                            {currency === "INR" && "₹"}
-                            {deal.original_price.toFixed(2)}
+                            {formatPrice(deal.original_price, currency).symbol}
+                            {formatPrice(deal.original_price, currency).value}
                           </span>
                         )}
                         {deal.sale_price && (
                           <span className="sale-price">
-                            {currency === "USD" && "$"}
-                            {currency === "EUR" && "€"}
-                            {currency === "INR" && "₹"}
-                            {deal.sale_price.toFixed(2)}
+                            {formatPrice(deal.sale_price, currency).symbol}
+                            {formatPrice(deal.sale_price, currency).value}
                           </span>
                         )}
                       </div>
