@@ -279,8 +279,8 @@ async def generate_sample_deals():
         }
     ]
     
-    # Clear existing sample deals
-    await db.deals.delete_many({"business_name": {"$in": ["Fashion Outlet", "Pizza Paradise", "Tech World", "Gourmet Grill", "Book Haven"]}})
+    # Clear ALL existing deals first
+    await db.deals.delete_many({})
     
     # Insert sample deals
     for deal in sample_deals:
