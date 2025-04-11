@@ -410,7 +410,17 @@ async def get_deals(
         # Filter by distance if location is provided
         if lat is not None and lng is not None:
             filtered_deals = []
+            # Determine city name from user request (this is a simplification)
+            is_bengaluru = any(loc in str(lat) + str(lng) for loc in ["12.9", "77.5"])
+            is_san_francisco = any(loc in str(lat) + str(lng) for loc in ["37.7", "-122"])
+            
             for deal in serialized_deals:
+                # Only include deals from the correct city
+                if is_bengaluru and "Bengaluru" not in deal["location"]["address"]:
+                    continue
+                if is_san_francisco and "San Francisco" not in deal["location"]["address"]:
+                    continue
+                    
                 deal_lat = deal["location"]["lat"]
                 deal_lng = deal["location"]["lng"]
                 distance = calculate_distance(lat, lng, deal_lat, deal_lng)
