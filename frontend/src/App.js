@@ -11,21 +11,32 @@ function App() {
   const [filter, setFilter] = useState({ category: "all", radius: 5, minDiscount: 15 });
 
   useEffect(() => {
-    // Load sample deals on first render
-    const loadSampleDeals = async () => {
+    // Generate sample deals only if there's no data in our database yet
+    const initializeApp = async () => {
       try {
-        await fetch(`${BACKEND_URL}/api/sample-deals`, {
-          method: 'POST',
-        });
-        fetchDeals();
+        // First, just try to fetch existing deals
+        const response = await fetch(`${BACKEND_URL}/api/deals`);
+        const data = await response.json();
+        
+        if (Array.isArray(data) && data.length > 0) {
+          // We already have deals, just display them
+          setDeals(data);
+          setLoading(false);
+        } else {
+          // No deals found, generate sample data
+          await fetch(`${BACKEND_URL}/api/sample-deals`, {
+            method: 'POST',
+          });
+          fetchDeals();
+        }
       } catch (err) {
-        console.error("Failed to load sample deals:", err);
-        setError("Failed to load sample deals. Please try again.");
+        console.error("Failed to initialize app:", err);
+        setError("Failed to load deals. Please try again.");
         setLoading(false);
       }
     };
 
-    loadSampleDeals();
+    initializeApp();
   }, []);
 
   const fetchDeals = async () => {
