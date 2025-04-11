@@ -312,7 +312,7 @@ async def generate_sample_deals():
             "sale_price": 187.5,
             "expiration_date": datetime(2025, 4, 20),
             "image_url": "https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://example-restaurant.com/deals/bengaluru-dosa"
+            "url": "https://www.google.com/search?q=South+Indian+Delight+dosa+discount+Jayanagar+Bengaluru"
         },
         {
             "title": "50% Off on Second Coffee",
