@@ -346,7 +346,7 @@ async def generate_sample_deals():
             "sale_price": 40000.0,
             "expiration_date": datetime(2025, 4, 25),
             "image_url": "https://images.unsplash.com/photo-1550009158-9ebf69173e03?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://example-retail.com/deals/bengaluru-electronics"
+            "url": "https://www.google.com/search?q=Gadget+Zone+electronics+discount+Jayanagar+Bengaluru"
         }
     ]
     
