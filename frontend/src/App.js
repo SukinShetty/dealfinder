@@ -183,7 +183,11 @@ function App() {
                   placeholder="e.g. Jayanagar, Bengaluru"
                   value={locationInput}
                   onChange={(e) => setLocationInput(e.target.value)}
+                  aria-label="Location search input"
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Try exact searches like "Jayanagar 2nd Block, Bengaluru" or "San Francisco, CA" for best results
+                </p>
               </div>
               <button 
                 type="submit" 
