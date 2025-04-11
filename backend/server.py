@@ -208,7 +208,7 @@ async def generate_sample_deals():
             "sale_price": 50.0,
             "expiration_date": datetime(2025, 5, 1),
             "image_url": "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://example-retail.com/deals/clothing-sale"
+            "url": "https://www.google.com/search?q=Fashion+Outlet+clothing+sales+San+Francisco"
         },
         {
             "title": "Buy One Get One Free Pizza",
