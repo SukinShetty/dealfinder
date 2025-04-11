@@ -103,6 +103,30 @@ body {
   background-color: var(--gray-dark);
 }
 
+.notification-button {
+  background-color: var(--gray);
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.notification-button:hover {
+  background-color: var(--gray-dark);
+}
+
+.notification-button.enabled {
+  background-color: var(--success);
+}
+
+.notification-button.enabled:hover {
+  background-color: #0d9668;
+}
+
 /* Loading Spinner */
 .loading-spinner {
   display: flex;
