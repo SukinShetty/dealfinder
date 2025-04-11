@@ -359,7 +359,16 @@ function App() {
                   </div>
                   
                   {deal.url && (
-                    <a href={deal.url} target="_blank" rel="noopener noreferrer" className="deal-cta">
+                    <a 
+                      href={deal.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="deal-cta"
+                      onClick={(e) => {
+                        // Log for debugging
+                        console.log("Opening URL:", deal.url);
+                      }}
+                    >
                       View Deal
                     </a>
                   )}
