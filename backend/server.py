@@ -242,7 +242,7 @@ async def generate_sample_deals():
             "sale_price": 700.0,
             "expiration_date": datetime(2025, 4, 30),
             "image_url": "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://example-retail.com/deals/electronics-sale"
+            "url": "https://www.google.com/search?q=Tech+World+electronics+sales+San+Francisco"
         },
         {
             "title": "20% Off Entire Menu",
