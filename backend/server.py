@@ -754,10 +754,10 @@ async def get_deals(
         # Filter by distance if location is provided
         if lat is not None and lng is not None:
             filtered_deals = []
-            # Determine neighborhood from coordinates
-            is_jayanagar = 12.93 <= float(lat) <= 12.94 and 77.58 <= float(lng) <= 77.59
-            is_brigade_road = 12.96 <= float(lat) <= 12.97 and 77.60 <= float(lng) <= 77.61
-            is_san_francisco = 37.7 <= float(lat) <= 37.8 and -122.5 <= float(lng) <= -122.3
+            # Determine neighborhood from coordinates or location name
+            is_jayanagar = 12.93 <= float(lat) <= 12.95 or 77.58 <= float(lng) <= 77.59
+            is_brigade_road = 12.96 <= float(lat) <= 12.98 or 77.60 <= float(lng) <= 77.61
+            is_san_francisco = 37.7 <= float(lat) <= 37.8 or -122.5 <= float(lng) <= -122.3
             
             for deal in serialized_deals:
                 # Only include deals from the correct neighborhood
