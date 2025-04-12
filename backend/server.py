@@ -598,11 +598,16 @@ async def get_deals(
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/scrape-deals")
-async def trigger_deal_scraping():
+async def trigger_deal_scraping(
+    location: str = Query(None, description="Name of the location"),
+    lat: float = Query(None, description="Latitude coordinate"),
+    lng: float = Query(None, description="Longitude coordinate"),
+    category: str = Query(None, description="Category of stores to scrape (retail, restaurant)")
+):
     """
-    Trigger deal scraping from websites
+    Trigger deal scraping from websites based on location
     """
-    result = await scrape_deals()
+    result = await scrape_deals(location_name=location, lat=lat, lng=lng, category=category)
     return result
 
 @app.post("/api/sample-deals")
