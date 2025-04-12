@@ -206,7 +206,7 @@ function App() {
                   type="text"
                   id="location"
                   className="input-field"
-                  placeholder="e.g. Jayanagar, Bengaluru"
+                  placeholder="e.g. Jayanagar 2nd Block, Bengaluru"
                   value={locationInput}
                   onChange={(e) => setLocationInput(e.target.value)}
                   aria-label="Location search input"
