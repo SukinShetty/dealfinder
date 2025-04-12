@@ -427,7 +427,7 @@ async def generate_sample_deals():
             "title": "50% Off All Clothing",
             "description": "Get 50% off all clothing items in store. Limited time offer!",
             "discount_percentage": 50.0,
-            "business_name": "Fashion Outlet",
+            "business_name": "Gap Union Square",
             "category": "retail",
             "location": {
                 "lat": 37.7749,
@@ -438,13 +438,13 @@ async def generate_sample_deals():
             "sale_price": 50.0,
             "expiration_date": datetime(2025, 5, 1),
             "image_url": "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://www.google.com/search?q=Fashion+Outlet+clothing+sales+San+Francisco"
+            "url": "https://www.gap.com/browse/category.do?cid=1065504"
         },
         {
             "title": "Buy One Get One Free Pizza",
             "description": "Order any large pizza and get a second one free. Valid for dine-in only.",
             "discount_percentage": 50.0,
-            "business_name": "Pizza Paradise",
+            "business_name": "Little Italy Restaurant",
             "category": "restaurant",
             "location": {
                 "lat": 37.7739,
@@ -455,13 +455,13 @@ async def generate_sample_deals():
             "sale_price": 12.5,
             "expiration_date": datetime(2025, 4, 15),
             "image_url": "https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://www.google.com/search?q=Pizza+Paradise+buy+one+get+one+San+Francisco"
+            "url": "https://littleitaly-sf.com/specials/"
         },
         {
             "title": "30% Off All Electronics",
             "description": "Save 30% on all electronics. Includes TVs, computers, and smartphones.",
             "discount_percentage": 30.0,
-            "business_name": "Tech World",
+            "business_name": "Best Buy SF",
             "category": "retail",
             "location": {
                 "lat": 37.7833,
@@ -472,13 +472,13 @@ async def generate_sample_deals():
             "sale_price": 700.0,
             "expiration_date": datetime(2025, 4, 30),
             "image_url": "https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://www.google.com/search?q=Tech+World+electronics+sales+San+Francisco"
+            "url": "https://www.bestbuy.com/site/electronics/top-deals/pcmcat1563299784494.c"
         },
         {
             "title": "20% Off Entire Menu",
             "description": "Enjoy 20% off your entire order. Valid Monday through Thursday.",
             "discount_percentage": 20.0,
-            "business_name": "Gourmet Grill",
+            "business_name": "Cheesecake Factory",
             "category": "restaurant",
             "location": {
                 "lat": 37.7694,
@@ -489,7 +489,7 @@ async def generate_sample_deals():
             "sale_price": 40.0,
             "expiration_date": datetime(2025, 5, 15),
             "image_url": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://www.google.com/search?q=Gourmet+Grill+menu+discount+San+Francisco"
+            "url": "https://www.thecheesecakefactory.com/specials-and-promotions/"
         },
         {
             "title": "Buy 2 Get 1 Free Books",
@@ -506,7 +506,7 @@ async def generate_sample_deals():
             "sale_price": 40.0,
             "expiration_date": datetime(2025, 6, 1),
             "image_url": "https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://www.google.com/search?q=Book+Haven+free+book+promotion"
+            "url": "https://www.barnesandnoble.com/b/books/_/N-1fZ29Z8q8"
         },
         
         # Bengaluru Deals (Jayanagar)
