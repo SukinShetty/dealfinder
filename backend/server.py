@@ -117,22 +117,90 @@ async def scrape_deals(location_name=None, lat=None, lng=None, category=None):
                 "Content-Type": "application/json"
             }
             
-            # Simplified payload for Firecrawl API v1
+            # Customized payload for each store website
+            store_selectors = {
+                # Zudio/Tata Cliq selectors
+                "tatacliq.com": {
+                    "selector": ".product-card, .product-grid-item, .product-tile",
+                    "properties": {
+                        "title": ".product-name, .product-title, h2",
+                        "description": ".product-description, .product-info",
+                        "discount": ".discount-label, .discount-tag, span:contains(\"%\")",
+                        "original_price": ".strike-price, .original-price, .old-price",
+                        "sale_price": ".discount-price, .selling-price, .sale-price",
+                        "image": "img@src"
+                    }
+                },
+                # Levi's selectors
+                "levi.in": {
+                    "selector": ".product-tile, .product-item, .product-card",
+                    "properties": {
+                        "title": ".product-name, .product-title",
+                        "description": ".product-description, .product-details",
+                        "discount": ".badge, .promo-badge, .discount-percentage",
+                        "original_price": ".price-standard, .list-price, .original-price",
+                        "sale_price": ".price-sales, .sale-price, .current-price",
+                        "image": "img.product-image@src"
+                    }
+                },
+                # H&M selectors
+                "hm.com": {
+                    "selector": ".product-item, .product-tile, li.product-detail",
+                    "properties": {
+                        "title": ".item-heading, .product-title, h3",
+                        "description": ".product-description, .item-description",
+                        "discount": ".item-price .sale, .discount-label, span:contains(\"%\")",
+                        "original_price": ".price-regular, .original-price",
+                        "sale_price": ".price-sale, .sale-price, .reduced-price",
+                        "image": "img.item-image@src"
+                    }
+                },
+                # Dominos selectors
+                "dominos.co.in": {
+                    "selector": ".offer-box, .coupon-box, .deal-item",
+                    "properties": {
+                        "title": ".offer-title, .coupon-title, h3",
+                        "description": ".offer-description, .details",
+                        "discount": ".discount-text, .deal-discount, span:contains(\"%\")",
+                        "original_price": ".original-price, .strike-price",
+                        "sale_price": ".offer-price, .deal-price",
+                        "image": "img@src"
+                    }
+                },
+                # Default selectors for any other store
+                "default": {
+                    "selector": "div.product, div.offer, div.promotion, div.deal, article.product, li.product",
+                    "properties": {
+                        "title": "h2, h3, .product-title, .offer-title, .title",
+                        "description": ".description, .product-details, p, .offer-description",
+                        "discount": ".discount, .sale-badge, .offer-percentage, span:contains(\"%\")",
+                        "original_price": ".original-price, .regular-price, .old-price, del",
+                        "sale_price": ".sale-price, .offer-price, .special-price, ins",
+                        "image": "img@src"
+                    }
+                }
+            }
+            
+            # Determine which selectors to use based on the store's website URL
+            store_domain = None
+            for domain in store_selectors.keys():
+                if domain in store["website"]:
+                    store_domain = domain
+                    break
+            
+            # Use default selectors if the domain doesn't match any known ones
+            if not store_domain or store_domain == "default":
+                store_domain = "default"
+            
+            # Build the payload with the appropriate selectors
             payload = {
                 "url": store["website"],
                 "wait_for": "domcontentloaded",
                 "extract_rules": {
                     "deals": {
-                        "selector": "div.product, div.offer, div.promotion, div.deal, article.product, li.product",
+                        "selector": store_selectors[store_domain]["selector"],
                         "type": "list",
-                        "properties": {
-                            "title": "h2, h3, .product-title, .offer-title, .title",
-                            "description": ".description, .product-details, p, .offer-description",
-                            "discount": ".discount, .sale-badge, .offer-percentage, span:contains(\"%\")",
-                            "original_price": ".original-price, .regular-price, .old-price, del",
-                            "sale_price": ".sale-price, .offer-price, .special-price, ins",
-                            "image": "img@src"
-                        }
+                        "properties": store_selectors[store_domain]["properties"]
                     }
                 }
             }
