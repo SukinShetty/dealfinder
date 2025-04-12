@@ -16,32 +16,8 @@ function App() {
   const [currency, setCurrency] = useState("USD");
 
   useEffect(() => {
-    // Generate sample deals only if there's no data in our database yet
-    const initializeApp = async () => {
-      try {
-        // First, just try to fetch existing deals
-        const response = await fetch(`${BACKEND_URL}/api/deals`);
-        const data = await response.json();
-        
-        if (Array.isArray(data) && data.length > 0) {
-          // We already have deals, just display them
-          setDeals(data);
-          setLoading(false);
-        } else {
-          // No deals found, generate sample data
-          await fetch(`${BACKEND_URL}/api/sample-deals`, {
-            method: 'POST',
-          });
-          fetchDeals();
-        }
-      } catch (err) {
-        console.error("Failed to initialize app:", err);
-        setError("Failed to load deals. Please try again.");
-        setLoading(false);
-      }
-    };
-
-    initializeApp();
+    // Just initialize the app, don't load deals right away
+    setLoading(false);
   }, []);
 
   const fetchDeals = async () => {
