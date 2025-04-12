@@ -319,7 +319,7 @@ async def find_local_stores(location_name=None, lat=None, lng=None, category=Non
                 "address": "456 Mission St, San Francisco, CA",
                 "lat": 37.7739,
                 "lng": -122.4312,
-                "website": "https://www.yelp.com/search?find_desc=Italian+Restaurants&find_loc=San+Francisco%2C+CA"
+                "website": "https://littleitaly-sf.com/specials/"
             },
             {
                 "name": "Best Buy SF",
