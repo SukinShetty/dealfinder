@@ -117,12 +117,12 @@ async def scrape_deals(location_name=None, lat=None, lng=None, category=None):
                 "Content-Type": "application/json"
             }
             
-            # Build dynamic selectors based on the store's website structure
+            # Simplified payload for Firecrawl API v1
             payload = {
                 "url": store["website"],
-                "selectors": [
-                    {
-                        "name": "deals",
+                "wait_for": "domcontentloaded",
+                "extract_rules": {
+                    "deals": {
                         "selector": "div.product, div.offer, div.promotion, div.deal, article.product, li.product",
                         "type": "list",
                         "properties": {
@@ -134,7 +134,7 @@ async def scrape_deals(location_name=None, lat=None, lng=None, category=None):
                             "image": "img@src"
                         }
                     }
-                ]
+                }
             }
             
             logger.info(f"Sending request to Firecrawl API for store: {store['name']}, URL: {store['website']}")
