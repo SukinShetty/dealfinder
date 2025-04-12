@@ -151,6 +151,9 @@ async def scrape_deals(location_name=None, lat=None, lng=None, category=None):
                 if response.status_code == 200:
                     data = response.json()
                     store_deals = data.get("deals", [])
+                    if not store_deals and "extract_rules" in data:
+                        # Try alternate format where extract_rules is returned
+                        store_deals = data.get("extract_rules", {}).get("deals", [])
                     
                     if store_deals:
                         logger.info(f"Found {len(store_deals)} potential deals for {store['name']}")
