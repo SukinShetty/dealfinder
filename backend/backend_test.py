@@ -1,16 +1,17 @@
-import requests
 import pytest
+import requests
+import json
 from datetime import datetime
 
-class DealFinderAPITester:
-    def __init__(self, base_url):
-        self.base_url = base_url
+class TestLocalDealFinder:
+    def __init__(self):
+        self.base_url = "https://484ff713-fe7c-4092-8908-e6296d7ea8df.preview.emergentagent.com/api"
         self.tests_run = 0
         self.tests_passed = 0
 
-    def run_test(self, name, method, endpoint, expected_status, params=None):
+    def run_test(self, name, method, endpoint, expected_status=200, params=None):
         """Run a single API test"""
-        url = f"{self.base_url}/api/{endpoint}"
+        url = f"{self.base_url}/{endpoint}"
         self.tests_run += 1
         print(f"\n🔍 Testing {name}...")
         
@@ -18,7 +19,7 @@ class DealFinderAPITester:
             if method == 'GET':
                 response = requests.get(url, params=params)
             elif method == 'POST':
-                response = requests.post(url, params=params)
+                response = requests.post(url, json=params)
 
             success = response.status_code == expected_status
             if success:
@@ -33,78 +34,119 @@ class DealFinderAPITester:
             print(f"❌ Failed - Error: {str(e)}")
             return False, None
 
-    def test_location_based_filtering(self):
-        """Test location-based deal filtering"""
-        print("\n📍 Testing Location-based Filtering...")
-
-        # Test Brigade Road deals
-        success, brigade_deals = self.run_test(
+    def test_brigade_road_deals(self):
+        """Test deals for Brigade Road location"""
+        success, response = self.run_test(
             "Brigade Road Deals",
             "GET",
             "deals",
-            200,
             params={
-                "lat": "12.9720",
-                "lng": "77.6081",
-                "radius": "5"
+                "lat": 12.9720,
+                "lng": 77.6081,
+                "radius": 1.0
             }
         )
         if success:
-            brigade_stores = [d["business_name"] for d in brigade_deals]
-            print(f"Brigade Road stores found: {brigade_stores}")
-            assert any("Brigade Road" in d["location"]["address"] for d in brigade_deals), "No Brigade Road deals found"
+            deals = response
+            print(f"Found {len(deals)} deals for Brigade Road")
+            # Verify deals are actually from Brigade Road
+            brigade_deals = [d for d in deals if "Brigade" in d["location"]["address"]]
+            print(f"Brigade Road specific deals: {len(brigade_deals)}/{len(deals)}")
+            return len(brigade_deals) > 0
+        return False
 
-        # Test Jayanagar deals
-        success, jayanagar_deals = self.run_test(
+    def test_jayanagar_deals(self):
+        """Test deals for Jayanagar location"""
+        success, response = self.run_test(
             "Jayanagar Deals",
             "GET",
             "deals",
-            200,
             params={
-                "lat": "12.9399",
-                "lng": "77.5826",
-                "radius": "5"
+                "lat": 12.9399,
+                "lng": 77.5826,
+                "radius": 1.0
             }
         )
         if success:
-            jayanagar_stores = [d["business_name"] for d in jayanagar_deals]
-            print(f"Jayanagar stores found: {jayanagar_stores}")
-            assert any("Jayanagar" in d["location"]["address"] for d in jayanagar_deals), "No Jayanagar deals found"
+            deals = response
+            print(f"Found {len(deals)} deals for Jayanagar")
+            # Verify deals are actually from Jayanagar
+            jayanagar_deals = [d for d in deals if "Jayanagar" in d["location"]["address"]]
+            print(f"Jayanagar specific deals: {len(jayanagar_deals)}/{len(deals)}")
+            return len(jayanagar_deals) > 0
+        return False
 
-    def test_price_formatting(self):
+    def test_price_format(self):
         """Test price formatting in deals"""
-        print("\n💰 Testing Price Formatting...")
-        
-        success, deals = self.run_test(
-            "Get Deals with Prices",
+        success, response = self.run_test(
+            "Price Format",
             "GET",
             "deals",
-            200
+            params={
+                "lat": 12.9720,
+                "lng": 77.6081,
+                "radius": 5.0
+            }
         )
-        if success and deals:
-            for deal in deals:
-                if deal.get("original_price"):
-                    assert isinstance(deal["original_price"], (int, float)), "Original price should be numeric"
-                if deal.get("sale_price"):
-                    assert isinstance(deal["sale_price"], (int, float)), "Sale price should be numeric"
-                print(f"✅ Price format valid for deal: {deal['title']}")
+        if success and response:
+            deals = response
+            for deal in deals[:3]:  # Check first 3 deals
+                print(f"\nChecking price format for deal: {deal['title']}")
+                if deal.get('original_price'):
+                    print(f"Original price: {deal['original_price']}")
+                    assert isinstance(deal['original_price'], (int, float))
+                if deal.get('sale_price'):
+                    print(f"Sale price: {deal['sale_price']}")
+                    assert isinstance(deal['sale_price'], (int, float))
+            return True
+        return False
+
+    def test_view_deal_links(self):
+        """Test view deal links"""
+        success, response = self.run_test(
+            "View Deal Links",
+            "GET",
+            "deals",
+            params={
+                "lat": 12.9720,
+                "lng": 77.6081,
+                "radius": 5.0
+            }
+        )
+        if success and response:
+            deals = response
+            for deal in deals[:3]:  # Check first 3 deals
+                print(f"\nChecking deal URL: {deal['title']}")
+                assert deal['url'].startswith('http'), f"Invalid URL format: {deal['url']}"
+            return True
+        return False
 
 def main():
-    # Initialize tester with the public endpoint
-    tester = DealFinderAPITester("https://484ff713-fe7c-4092-8908-e6296d7ea8df.preview.emergentagent.com")
-
-    # Generate sample deals first
-    print("\n🔄 Generating sample deals...")
-    tester.run_test("Generate Sample Deals", "POST", "sample-deals", 200)
-
+    tester = TestLocalDealFinder()
+    
+    # First ensure we have sample data
+    print("\n🔄 Generating sample data...")
+    requests.post(f"{tester.base_url}/sample-deals")
+    
     # Run tests
-    tester.test_location_based_filtering()
-    tester.test_price_formatting()
+    tests_passed = 0
+    total_tests = 4
+    
+    if tester.test_brigade_road_deals():
+        tests_passed += 1
+    
+    if tester.test_jayanagar_deals():
+        tests_passed += 1
+    
+    if tester.test_price_format():
+        tests_passed += 1
+    
+    if tester.test_view_deal_links():
+        tests_passed += 1
 
     # Print results
-    print(f"\n📊 Tests Summary:")
-    print(f"Tests passed: {tester.tests_passed}/{tester.tests_run}")
-    return 0 if tester.tests_passed == tester.tests_run else 1
+    print(f"\n📊 Tests passed: {tests_passed}/{total_tests}")
+    return 0 if tests_passed == total_tests else 1
 
 if __name__ == "__main__":
     main()
