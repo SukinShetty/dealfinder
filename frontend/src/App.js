@@ -158,9 +158,15 @@ function App() {
     
     const convertedPrice = price * conversionRate;
     
+    // Format with thousand separators and proper decimal places
+    const formattedValue = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(Math.round(convertedPrice));
+    
     return {
       symbol: currencyCode === "USD" ? "$" : currencyCode === "INR" ? "₹" : "€",
-      value: convertedPrice.toFixed(2)
+      value: formattedValue
     };
   };
 
