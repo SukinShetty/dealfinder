@@ -514,7 +514,7 @@ async def generate_sample_deals():
             "title": "40% Off on All Clothing",
             "description": "Special sale on all clothing items. Limited time only!",
             "discount_percentage": 40.0,
-            "business_name": "Fashion Hub",
+            "business_name": "Zudio Jayanagar",
             "category": "retail",
             "location": {
                 "lat": 12.9399039,
@@ -525,7 +525,7 @@ async def generate_sample_deals():
             "sale_price": 1200.0,
             "expiration_date": datetime(2025, 5, 10),
             "image_url": "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://www.google.com/search?q=Fashion+Hub+clothing+discount+Jayanagar+Bengaluru"
+            "url": "https://www.tatacliq.com/zudio/c-msh1451/offers"
         },
         {
             "title": "25% Off on Dosa Combos",
@@ -542,41 +542,41 @@ async def generate_sample_deals():
             "sale_price": 187.5,
             "expiration_date": datetime(2025, 4, 20),
             "image_url": "https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://www.google.com/search?q=South+Indian+Delight+dosa+discount+Jayanagar+Bengaluru"
+            "url": "https://www.zomato.com/bangalore/south-indian-restaurants-in-jayanagar"
         },
         {
-            "title": "50% Off on Second Coffee",
-            "description": "Buy one coffee, get 50% off on the second one. Perfect for catch-ups!",
+            "title": "50% Off on Second Pair of Jeans",
+            "description": "Buy one pair of jeans, get 50% off on the second one. All styles!",
             "discount_percentage": 50.0,
-            "business_name": "Coffee Culture",
-            "category": "restaurant",
+            "business_name": "Levi's Store Jayanagar",
+            "category": "retail",
             "location": {
                 "lat": 12.9410,
                 "lng": 77.5815,
                 "address": "Cool Joint Rd, Jayanagar 2nd Block, Bengaluru"
             },
-            "original_price": 180.0,
-            "sale_price": 90.0,
+            "original_price": 3999.0,
+            "sale_price": 1999.0,
             "expiration_date": datetime(2025, 5, 5),
             "image_url": "https://images.unsplash.com/photo-1497935586047-9242eb4fc795?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://www.google.com/search?q=Coffee+Culture+discount+Jayanagar+Bengaluru"
+            "url": "https://www.levi.in/discount/sale"
         },
         {
-            "title": "20% Off on All Electronics",
-            "description": "Special discount on all electronics including smartphones, laptops and accessories.",
+            "title": "20% Off on All Summer Collection",
+            "description": "Special discount on the entire summer collection - tops, tees, and accessories included.",
             "discount_percentage": 20.0,
-            "business_name": "Gadget Zone",
+            "business_name": "H&M Jayanagar",
             "category": "retail",
             "location": {
                 "lat": 12.9395,
                 "lng": 77.5840,
                 "address": "Brigade Rd, Jayanagar 2nd Block, Bengaluru"
             },
-            "original_price": 50000.0,
-            "sale_price": 40000.0,
+            "original_price": 1499.0,
+            "sale_price": 1199.0,
             "expiration_date": datetime(2025, 4, 25),
             "image_url": "https://images.unsplash.com/photo-1550009158-9ebf69173e03?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
-            "url": "https://www.google.com/search?q=Gadget+Zone+electronics+discount+Jayanagar+Bengaluru"
+            "url": "https://www2.hm.com/en_in/sale.html"
         }
     ]
     
