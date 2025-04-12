@@ -20,7 +20,7 @@ function App() {
     setLoading(false);
   }, []);
 
-  const fetchDeals = async () => {
+  const fetchDeals = async (locationName) => {
     try {
       setLoading(true);
       let url = `${BACKEND_URL}/api/deals?min_discount=${filter.minDiscount}`;
@@ -31,8 +31,14 @@ function App() {
       
       if (location.lat && location.lng) {
         url += `&lat=${location.lat}&lng=${location.lng}&radius=${filter.radius}`;
+        
+        // Add location name to help with filtering
+        if (locationName) {
+          url += `&location=${encodeURIComponent(locationName)}`;
+        }
       }
       
+      console.log("Fetching deals from:", url);
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -40,10 +46,34 @@ function App() {
       }
       
       const data = await response.json();
+      console.log(`Found ${data.length} deals`);
+      
+      // Filter deals based on location name if provided
+      let filteredDeals = data;
+      if (locationName) {
+        const locationLower = locationName.toLowerCase();
+        if (locationLower.includes("brigade")) {
+          console.log("Filtering for Brigade Road deals");
+          filteredDeals = data.filter(deal => 
+            deal.location.address.includes("Brigade")
+          );
+        } else if (locationLower.includes("jayanagar")) {
+          console.log("Filtering for Jayanagar deals");
+          filteredDeals = data.filter(deal => 
+            deal.location.address.includes("Jayanagar")
+          );
+        } else if (locationLower.includes("san francisco") || locationLower.includes("sf")) {
+          console.log("Filtering for San Francisco deals");
+          filteredDeals = data.filter(deal => 
+            deal.location.address.includes("San Francisco")
+          );
+        }
+        console.log(`After filtering: ${filteredDeals.length} deals match location`);
+      }
       
       // Ensure deals are unique by ID
       const uniqueDeals = {};
-      data.forEach(deal => {
+      filteredDeals.forEach(deal => {
         uniqueDeals[deal.id] = deal;
       });
       
