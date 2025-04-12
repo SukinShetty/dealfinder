@@ -329,8 +329,10 @@ async def find_local_stores(location_name=None, lat=None, lng=None, category=Non
         is_bengaluru = "bengaluru" in location_name.lower() or "bangalore" in location_name.lower() or "jayanagar" in location_name.lower()
         is_san_francisco = "san francisco" in location_name.lower() or "sf" in location_name.lower()
     elif lat and lng:
-        is_bengaluru = any(loc in str(lat) + str(lng) for loc in ["12.9", "77.5"])
-        is_san_francisco = any(loc in str(lat) + str(lng) for loc in ["37.7", "-122"])
+        # More precise coordinate-based detection for Bengaluru (Jayanagar area)
+        is_bengaluru = 12.92 <= float(lat) <= 12.95 and 77.57 <= float(lng) <= 77.59
+        # More precise coordinate-based detection for San Francisco
+        is_san_francisco = 37.7 <= float(lat) <= 37.8 and -122.5 <= float(lng) <= -122.3
     
     # Define some stores for Bengaluru (Jayanagar)
     if is_bengaluru:
