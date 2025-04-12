@@ -167,12 +167,25 @@ function App() {
         
         // Check if it's a timeout error
         if (scrapeErr.name === "TimeoutError" || scrapeErr.name === "AbortError") {
-          setError("The request took too long. The server might be busy. Please try again or try a different location.");
+          console.log("Timeout occurred, falling back to sample deals");
         } else {
-          setError("Failed to find deals for this location. Please try again or try a different location.");
+          console.log("API error occurred, falling back to sample deals");
         }
         
-        setLoading(false);
+        // Fall back to sample deals for demo purposes
+        try {
+          // First generate sample deals
+          await fetch(`${BACKEND_URL}/api/sample-deals`, {
+            method: 'POST',
+          });
+          
+          // Then fetch them with filtering
+          await fetchDeals(locationInput);
+        } catch (sampleErr) {
+          console.error("Error loading sample deals:", sampleErr);
+          setError("Failed to load any deals. Please try again later.");
+          setLoading(false);
+        }
       }
     } catch (err) {
       console.error("Geocoding error:", err);
