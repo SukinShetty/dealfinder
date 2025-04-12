@@ -765,7 +765,7 @@ async def get_deals(
                     if "Jayanagar" not in deal["location"]["address"]:
                         continue
                 elif is_brigade_road:
-                    if "Brigade Road" not in deal["location"]["address"]:
+                    if "Brigade" not in deal["location"]["address"]:
                         continue
                 elif is_san_francisco:
                     if "San Francisco" not in deal["location"]["address"]:
