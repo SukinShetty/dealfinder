@@ -371,7 +371,11 @@ function App() {
               <div className="spinner"></div>
               <p>Scraping deals from {locationInput}...</p>
               <p className="text-sm text-gray-500 mt-2">
-                We're fetching deals from stores like Zudio, Levi's, and H&M in your area. This may take 15-30 seconds.
+                We're fetching deals from stores like {locationInput.toLowerCase().includes("brigade") ? 
+                  "Lifestyle, Adidas, and Westside" : 
+                  locationInput.toLowerCase().includes("jayanagar") ? 
+                  "Zudio, Levi's, and H&M" : 
+                  "Gap, Best Buy, and local restaurants"} in your area. This may take 15-30 seconds.
               </p>
             </div>
           ) : error ? (
