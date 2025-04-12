@@ -295,7 +295,7 @@ function App() {
           {loading ? (
             <div className="loading-spinner">
               <div className="spinner"></div>
-              <p>Loading deals...</p>
+              <p>Loading deals... This may take a moment as we scrape live deals from local stores.</p>
             </div>
           ) : error ? (
             <div className="error-message">
@@ -306,15 +306,17 @@ function App() {
             </div>
           ) : deals.length === 0 ? (
             <div className="no-deals-message">
-              <p>No deals found matching your criteria.</p>
-              {location.lat && location.lng ? (
+              {!location.lat && !location.lng ? (
+                <div>
+                  <p>Enter a location above to find deals nearby.</p>
+                  <p>Try searching for "Jayanagar 2nd Block, Bengaluru" or "San Francisco, CA".</p>
+                </div>
+              ) : (
                 <div>
                   <p>No deals found within {filter.radius} miles of your selected location.</p>
                   <p>Try these exact searches: "Jayanagar 2nd Block, Bengaluru" or "San Francisco, CA" where we have sample deals.</p>
                   <p>Current search location: {locationInput} (coordinates: {location.lat}, {location.lng})</p>
                 </div>
-              ) : (
-                <p>Try entering a location or adjusting your filters.</p>
               )}
             </div>
           ) : (
