@@ -48,26 +48,53 @@ function App() {
       const data = await response.json();
       console.log(`Found ${data.length} deals`);
       
-      // Filter deals based on location name if provided
+      // Filter deals based on location name if provided - STRICT FILTERING
       let filteredDeals = data;
       if (locationName) {
         const locationLower = locationName.toLowerCase();
         if (locationLower.includes("brigade")) {
-          console.log("Filtering for Brigade Road deals");
+          console.log("Filtering for Brigade Road deals ONLY");
           filteredDeals = data.filter(deal => 
-            deal.location.address.includes("Brigade")
+            deal.location.address.includes("Brigade Road") && !deal.location.address.includes("Jayanagar")
           );
+          if (filteredDeals.length === 0) {
+            // Fallback to a more lenient search
+            filteredDeals = data.filter(deal => 
+              deal.location.address.includes("Brigade") && !deal.location.address.includes("Jayanagar")
+            );
+          }
         } else if (locationLower.includes("jayanagar")) {
-          console.log("Filtering for Jayanagar deals");
+          console.log("Filtering for Jayanagar deals ONLY");
           filteredDeals = data.filter(deal => 
-            deal.location.address.includes("Jayanagar")
+            deal.location.address.includes("Jayanagar") && !deal.location.address.includes("Brigade")
           );
         } else if (locationLower.includes("san francisco") || locationLower.includes("sf")) {
-          console.log("Filtering for San Francisco deals");
+          console.log("Filtering for San Francisco deals ONLY");
           filteredDeals = data.filter(deal => 
-            deal.location.address.includes("San Francisco")
+            deal.location.address.includes("San Francisco") && 
+            !deal.location.address.includes("Jayanagar") && 
+            !deal.location.address.includes("Brigade")
           );
         }
+        
+        // Fallback in case strict filtering removed all deals
+        if (filteredDeals.length === 0) {
+          console.log("No deals found with strict filtering, using more lenient filtering");
+          if (locationLower.includes("brigade")) {
+            filteredDeals = data.filter(deal => deal.business_name.includes("Brigade") || 
+                                               deal.business_name.includes("Lifestyle") || 
+                                               deal.business_name.includes("Adidas") || 
+                                               deal.business_name.includes("Westside") ||
+                                               deal.business_name.includes("Hard Rock"));
+          } else if (locationLower.includes("jayanagar")) {
+            filteredDeals = data.filter(deal => deal.business_name.includes("Jayanagar") || 
+                                               deal.business_name.includes("Zudio") || 
+                                               deal.business_name.includes("Levi's") || 
+                                               deal.business_name.includes("H&M") ||
+                                               deal.business_name.includes("Dominos"));
+          }
+        }
+        
         console.log(`After filtering: ${filteredDeals.length} deals match location`);
       }
       
