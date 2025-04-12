@@ -463,6 +463,9 @@ async def generate_sample_deals():
     """
     Generate sample deals for testing purposes
     """
+    # Clear ALL existing deals first
+    await db.deals.delete_many({})
+    
     sample_deals = [
         # San Francisco Deals
         {
