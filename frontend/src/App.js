@@ -305,7 +305,10 @@ function App() {
           {loading ? (
             <div className="loading-spinner">
               <div className="spinner"></div>
-              <p>Loading deals... This may take a moment as we scrape live deals from local stores.</p>
+              <p>Scraping deals from {locationInput}...</p>
+              <p className="text-sm text-gray-500 mt-2">
+                We're fetching deals from stores like Zudio, Levi's, and H&M in your area. This may take 15-30 seconds.
+              </p>
             </div>
           ) : error ? (
             <div className="error-message">
