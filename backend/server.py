@@ -191,6 +191,8 @@ async def scrape_deals(location_name=None, lat=None, lng=None, category=None):
             # Use default selectors if the domain doesn't match any known ones
             if not store_domain or store_domain == "default":
                 store_domain = "default"
+                
+            logger.info(f"Using selectors for domain: {store_domain}")
             
             # Build the payload with the appropriate selectors
             payload = {
