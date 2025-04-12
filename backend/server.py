@@ -84,108 +84,264 @@ def calculate_distance(lat1, lng1, lat2, lng2):
     return distance
 
 # Firecrawl API integration
-async def scrape_deals():
+async def scrape_deals(location_name=None, lat=None, lng=None, category=None):
     """
-    Use Firecrawl API to scrape deals from websites
+    Use Firecrawl API to scrape deals from local store websites based on location
     """
     try:
-        # Example target websites for retail and restaurants
-        # This would be expanded or made configurable in a production app
-        target_sites = [
-            "https://www.example-retail.com",
-            "https://www.example-restaurant.com"
-        ]
+        if not location_name and (not lat or not lng):
+            raise HTTPException(status_code=400, detail="Location name or coordinates required")
+        
+        logger.info(f"Scraping deals for location: {location_name} or coordinates: {lat}, {lng}, category: {category}")
+        
+        # Clear previous deals for this location to avoid duplicates
+        location_query = {}
+        if location_name:
+            location_query = {"location.address": {"$regex": location_name, "$options": "i"}}
+        
+        await db.deals.delete_many(location_query)
+        
+        # Determine which stores to target based on location and category
+        target_stores = await find_local_stores(location_name, lat, lng, category)
+        
+        if not target_stores:
+            logger.warning(f"No stores found for location: {location_name} or coordinates: {lat}, {lng}")
+            return {"message": "No local stores found for the specified location"}
         
         all_deals = []
         
-        for site in target_sites:
+        for store in target_stores:
             # Set up Firecrawl API request
             headers = {
                 "Authorization": f"Bearer {FIRECRAWL_API_KEY}",
                 "Content-Type": "application/json"
             }
             
-            # This payload would be customized based on the actual structure of the target sites
+            # Build dynamic selectors based on the store's website structure
             payload = {
-                "url": site,
+                "url": store["website"],
                 "selectors": [
                     {
                         "name": "deals",
-                        "selector": ".deal-item",  # CSS selector for deal elements
+                        "selector": "div.product, div.offer, div.promotion, div.deal, article.product, li.product",
                         "type": "list",
                         "properties": {
-                            "title": ".deal-title",
-                            "description": ".deal-description",
-                            "discount": ".discount-percentage",
-                            "original_price": ".original-price",
-                            "sale_price": ".sale-price",
-                            "business_name": ".business-name",
-                            "location": ".location-data",  # This would contain address data
-                            "expiration": ".expiration-date"
+                            "title": "h2, h3, .product-title, .offer-title, .title",
+                            "description": ".description, .product-details, p, .offer-description",
+                            "discount": ".discount, .sale-badge, .offer-percentage, span:contains(\"%\")",
+                            "original_price": ".original-price, .regular-price, .old-price, del",
+                            "sale_price": ".sale-price, .offer-price, .special-price, ins",
+                            "image": "img@src"
                         }
                     }
                 ]
             }
             
-            # Example usage of Firecrawl API (URL would be adjusted based on actual API)
-            response = requests.post(
-                "https://api.firecrawl.dev/v1/scrape",
-                headers=headers,
-                json=payload
-            )
+            logger.info(f"Sending request to Firecrawl API for store: {store['name']}, URL: {store['website']}")
             
-            if response.status_code == 200:
-                data = response.json()
-                if "deals" in data and data["deals"]:
-                    all_deals.extend(data["deals"])
-            else:
-                logger.error(f"Error from Firecrawl API: {response.status_code} - {response.text}")
-        
-        # Process and store deals
-        for deal_data in all_deals:
-            # Extract and format deal data
-            # This would be customized based on the actual structure of scraped data
+            # Call the Firecrawl API
             try:
-                discount_text = deal_data.get("discount", "0%").strip("%")
-                discount_percentage = float(discount_text)
-                
-                if discount_percentage < 15:
-                    continue  # Skip deals with less than 15% discount
-                
-                # Format location data
-                location_data = deal_data.get("location", "")
-                # In a real app, we'd use geocoding to get lat/lng from address
-                # For now, use placeholder values
-                location = Location(
-                    lat=37.7749,  # Example latitude
-                    lng=-122.4194,  # Example longitude
-                    address=location_data
+                response = requests.post(
+                    "https://api.firecrawl.dev/v1/scrape",
+                    headers=headers,
+                    json=payload,
+                    timeout=30
                 )
                 
-                # Create deal object
-                deal = Deal(
-                    title=deal_data.get("title", ""),
-                    description=deal_data.get("description", ""),
-                    discount_percentage=discount_percentage,
-                    business_name=deal_data.get("business_name", ""),
-                    category="retail" if "retail" in site else "restaurant",
-                    location=location,
-                    original_price=float(deal_data.get("original_price", "0").strip("$") or 0),
-                    sale_price=float(deal_data.get("sale_price", "0").strip("$") or 0),
-                    url=site
-                )
-                
-                # Store in database
-                await db.deals.insert_one(deal.dict())
-                
+                if response.status_code == 200:
+                    data = response.json()
+                    store_deals = data.get("deals", [])
+                    
+                    if store_deals:
+                        logger.info(f"Found {len(store_deals)} potential deals for {store['name']}")
+                        
+                        # Process and store each deal
+                        for deal_data in store_deals:
+                            try:
+                                # Extract discount percentage
+                                discount_text = deal_data.get("discount", "")
+                                if not discount_text:
+                                    # Try to calculate from original and sale prices
+                                    original_price_text = deal_data.get("original_price", "").replace("$", "").replace("₹", "").replace("€", "").strip()
+                                    sale_price_text = deal_data.get("sale_price", "").replace("$", "").replace("₹", "").replace("€", "").strip()
+                                    
+                                    if original_price_text and sale_price_text:
+                                        try:
+                                            original_price = float(original_price_text)
+                                            sale_price = float(sale_price_text)
+                                            if original_price > 0:
+                                                discount_percentage = round(((original_price - sale_price) / original_price) * 100, 2)
+                                            else:
+                                                continue
+                                        except (ValueError, TypeError):
+                                            continue
+                                    else:
+                                        continue
+                                else:
+                                    # Extract percentage from text
+                                    discount_match = re.search(r'(\d+)[%]', discount_text)
+                                    if discount_match:
+                                        discount_percentage = float(discount_match.group(1))
+                                    else:
+                                        try:
+                                            discount_percentage = float(discount_text.strip("%"))
+                                        except (ValueError, TypeError):
+                                            continue
+                                
+                                # Skip deals with less than 15% discount
+                                if discount_percentage < 15:
+                                    continue
+                                
+                                # Format prices
+                                original_price_text = deal_data.get("original_price", "").replace("$", "").replace("₹", "").replace("€", "").strip()
+                                sale_price_text = deal_data.get("sale_price", "").replace("$", "").replace("₹", "").replace("€", "").strip()
+                                
+                                try:
+                                    original_price = float(original_price_text) if original_price_text else None
+                                    sale_price = float(sale_price_text) if sale_price_text else None
+                                except (ValueError, TypeError):
+                                    original_price = None
+                                    sale_price = None
+                                
+                                # Create the deal object
+                                deal = Deal(
+                                    title=deal_data.get("title", "Unknown Deal").strip(),
+                                    description=deal_data.get("description", "").strip(),
+                                    discount_percentage=discount_percentage,
+                                    business_name=store["name"],
+                                    category=store["category"],
+                                    location=Location(
+                                        lat=store["lat"],
+                                        lng=store["lng"],
+                                        address=store["address"]
+                                    ),
+                                    original_price=original_price,
+                                    sale_price=sale_price,
+                                    image_url=deal_data.get("image", ""),
+                                    url=store["website"],
+                                    expiration_date=None  # Usually not available from scraped data
+                                )
+                                
+                                # Store in database
+                                await db.deals.insert_one(deal.dict())
+                                all_deals.append(deal)
+                                
+                            except Exception as e:
+                                logger.error(f"Error processing deal from {store['name']}: {e}")
+                    else:
+                        logger.warning(f"No deals found for {store['name']}")
+                else:
+                    logger.error(f"Error from Firecrawl API for {store['name']}: {response.status_code} - {response.text}")
+            
             except Exception as e:
-                logger.error(f"Error processing deal: {e}")
-                
-        return {"message": f"Scraped and processed {len(all_deals)} deals"}
+                logger.error(f"Error scraping {store['name']}: {e}")
+        
+        return {"message": f"Scraped and processed {len(all_deals)} deals from {len(target_stores)} stores"}
     
     except Exception as e:
         logger.error(f"Error in scrape_deals: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+async def find_local_stores(location_name=None, lat=None, lng=None, category=None):
+    """
+    Find local stores based on location and category
+    This would typically use an external API like Google Places, but for demonstration
+    we'll use a simplified approach with some predefined stores
+    """
+    stores = []
+    
+    # Determine if we're looking for Bengaluru or San Francisco area
+    is_bengaluru = False
+    is_san_francisco = False
+    
+    if location_name:
+        is_bengaluru = "bengaluru" in location_name.lower() or "bangalore" in location_name.lower() or "jayanagar" in location_name.lower()
+        is_san_francisco = "san francisco" in location_name.lower() or "sf" in location_name.lower()
+    elif lat and lng:
+        is_bengaluru = any(loc in str(lat) + str(lng) for loc in ["12.9", "77.5"])
+        is_san_francisco = any(loc in str(lat) + str(lng) for loc in ["37.7", "-122"])
+    
+    # Define some stores for Bengaluru (Jayanagar)
+    if is_bengaluru:
+        bengaluru_stores = [
+            {
+                "name": "Zudio Jayanagar",
+                "category": "retail",
+                "address": "11th Main Rd, 2nd Block, Jayanagar, Bengaluru",
+                "lat": 12.9399039,
+                "lng": 77.5826382,
+                "website": "https://www.tatacliq.com/zudio"
+            },
+            {
+                "name": "Levi's Store Jayanagar",
+                "category": "retail",
+                "address": "30th Cross, Jayanagar 2nd Block, Bengaluru",
+                "lat": 12.9385,
+                "lng": 77.5832,
+                "website": "https://www.levi.in/sale"
+            },
+            {
+                "name": "H&M Jayanagar",
+                "category": "retail",
+                "address": "Cool Joint Rd, Jayanagar 2nd Block, Bengaluru",
+                "lat": 12.9410,
+                "lng": 77.5815,
+                "website": "https://www2.hm.com/en_in/sale.html"
+            },
+            {
+                "name": "Dominos Pizza Jayanagar",
+                "category": "restaurant",
+                "address": "Brigade Rd, Jayanagar 2nd Block, Bengaluru",
+                "lat": 12.9395,
+                "lng": 77.5840,
+                "website": "https://www.dominos.co.in/offers"
+            }
+        ]
+        stores.extend(bengaluru_stores)
+    
+    # Define some stores for San Francisco
+    if is_san_francisco:
+        sf_stores = [
+            {
+                "name": "Gap Union Square",
+                "category": "retail",
+                "address": "123 Market St, San Francisco, CA",
+                "lat": 37.7749,
+                "lng": -122.4194,
+                "website": "https://www.gap.com/browse/category.do?cid=1065504"
+            },
+            {
+                "name": "Little Italy Restaurant",
+                "category": "restaurant",
+                "address": "456 Mission St, San Francisco, CA",
+                "lat": 37.7739,
+                "lng": -122.4312,
+                "website": "https://www.yelp.com/search?find_desc=Italian+Restaurants&find_loc=San+Francisco%2C+CA"
+            },
+            {
+                "name": "Best Buy SF",
+                "category": "retail",
+                "address": "789 Powell St, San Francisco, CA",
+                "lat": 37.7833,
+                "lng": -122.4167,
+                "website": "https://www.bestbuy.com/site/electronics/top-deals/pcmcat1563299784494.c"
+            },
+            {
+                "name": "Cheesecake Factory",
+                "category": "restaurant",
+                "address": "101 California St, San Francisco, CA",
+                "lat": 37.7694,
+                "lng": -122.4862,
+                "website": "https://www.thecheesecakefactory.com/specials-and-promotions/"
+            }
+        ]
+        stores.extend(sf_stores)
+    
+    # Filter by category if provided
+    if category and category != "all":
+        stores = [store for store in stores if store["category"] == category]
+    
+    return stores
 
 # Mock function to generate sample deals for testing
 async def generate_sample_deals():
