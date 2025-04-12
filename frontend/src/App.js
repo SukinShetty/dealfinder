@@ -84,7 +84,8 @@ function App() {
       }
       
       const { lat, lon } = data[0];
-      setLocation({ lat, lng: lon });
+      // Store the location name along with coordinates
+      setLocation({ lat, lng: lon, name: locationInput });
       
       // First, scrape deals for this location using Firecrawl API
       setLoading(true);
@@ -102,8 +103,8 @@ function App() {
           throw new Error("Failed to scrape deals for this location");
         }
         
-        // Now fetch the deals
-        await fetchDeals();
+        // Now fetch the deals with location name included to ensure proper filtering
+        await fetchDeals(locationInput);
       } catch (scrapeErr) {
         console.error("Error scraping deals:", scrapeErr);
         
