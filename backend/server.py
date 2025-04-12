@@ -641,8 +641,8 @@ async def get_deals(
         if lat is not None and lng is not None:
             filtered_deals = []
             # Determine city name from user request (this is a simplification)
-            is_bengaluru = any(loc in str(lat) + str(lng) for loc in ["12.9", "77.5"])
-            is_san_francisco = any(loc in str(lat) + str(lng) for loc in ["37.7", "-122"])
+            is_bengaluru = 12.92 <= float(lat) <= 12.95 and 77.57 <= float(lng) <= 77.59
+            is_san_francisco = 37.7 <= float(lat) <= 37.8 and -122.5 <= float(lng) <= -122.3
             
             for deal in serialized_deals:
                 # Only include deals from the correct city
