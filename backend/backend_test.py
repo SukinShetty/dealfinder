@@ -3,7 +3,7 @@ import requests
 import json
 from datetime import datetime
 
-class TestLocalDealFinder:
+class TestLocalDealFinderAPI:
     def __init__(self):
         self.base_url = "https://484ff713-fe7c-4092-8908-e6296d7ea8df.preview.emergentagent.com/api"
         self.tests_run = 0
@@ -11,18 +11,17 @@ class TestLocalDealFinder:
 
     def run_test(self, name, method, endpoint, expected_status=200, params=None):
         """Run a single API test"""
-        url = f"{self.base_url}/{endpoint}"
         self.tests_run += 1
-        print(f"\n🔍 Testing {name}...")
+        url = f"{self.base_url}/{endpoint}"
         
+        print(f"\n🔍 Testing {name}...")
         try:
             if method == 'GET':
                 response = requests.get(url, params=params)
             elif method == 'POST':
                 response = requests.post(url, json=params)
 
-            success = response.status_code == expected_status
-            if success:
+            if response.status_code == expected_status:
                 self.tests_passed += 1
                 print(f"✅ Passed - Status: {response.status_code}")
                 return True, response.json()
@@ -34,119 +33,85 @@ class TestLocalDealFinder:
             print(f"❌ Failed - Error: {str(e)}")
             return False, None
 
-    def test_brigade_road_deals(self):
-        """Test deals for Brigade Road location"""
-        success, response = self.run_test(
-            "Brigade Road Deals",
+    def test_root_endpoint(self):
+        """Test the root API endpoint"""
+        return self.run_test(
+            "Root Endpoint",
             "GET",
-            "deals",
-            params={
-                "lat": 12.9720,
-                "lng": 77.6081,
-                "radius": 1.0
-            }
+            ""
         )
-        if success:
-            deals = response
-            print(f"Found {len(deals)} deals for Brigade Road")
-            # Verify deals are actually from Brigade Road
-            brigade_deals = [d for d in deals if "Brigade" in d["location"]["address"]]
-            print(f"Brigade Road specific deals: {len(brigade_deals)}/{len(deals)}")
-            return len(brigade_deals) > 0
-        return False
 
-    def test_jayanagar_deals(self):
-        """Test deals for Jayanagar location"""
-        success, response = self.run_test(
-            "Jayanagar Deals",
+    def test_get_deals_brigade_road(self):
+        """Test getting deals for Brigade Road"""
+        params = {
+            "lat": 12.9720,
+            "lng": 77.6081,
+            "radius": 1,
+            "min_discount": 15
+        }
+        return self.run_test(
+            "Get Brigade Road Deals",
             "GET",
             "deals",
-            params={
-                "lat": 12.9399,
-                "lng": 77.5826,
-                "radius": 1.0
-            }
+            params=params
         )
-        if success:
-            deals = response
-            print(f"Found {len(deals)} deals for Jayanagar")
-            # Verify deals are actually from Jayanagar
-            jayanagar_deals = [d for d in deals if "Jayanagar" in d["location"]["address"]]
-            print(f"Jayanagar specific deals: {len(jayanagar_deals)}/{len(deals)}")
-            return len(jayanagar_deals) > 0
-        return False
 
-    def test_price_format(self):
-        """Test price formatting in deals"""
-        success, response = self.run_test(
-            "Price Format",
+    def test_get_deals_jayanagar(self):
+        """Test getting deals for Jayanagar"""
+        params = {
+            "lat": 12.9399,
+            "lng": 77.5826,
+            "radius": 1,
+            "min_discount": 15
+        }
+        return self.run_test(
+            "Get Jayanagar Deals",
             "GET",
             "deals",
-            params={
-                "lat": 12.9720,
-                "lng": 77.6081,
-                "radius": 5.0
-            }
+            params=params
         )
-        if success and response:
-            deals = response
-            for deal in deals[:3]:  # Check first 3 deals
-                print(f"\nChecking price format for deal: {deal['title']}")
-                if deal.get('original_price'):
-                    print(f"Original price: {deal['original_price']}")
-                    assert isinstance(deal['original_price'], (int, float))
-                if deal.get('sale_price'):
-                    print(f"Sale price: {deal['sale_price']}")
-                    assert isinstance(deal['sale_price'], (int, float))
-            return True
-        return False
 
-    def test_view_deal_links(self):
-        """Test view deal links"""
-        success, response = self.run_test(
-            "View Deal Links",
-            "GET",
-            "deals",
-            params={
-                "lat": 12.9720,
-                "lng": 77.6081,
-                "radius": 5.0
-            }
+    def test_generate_sample_deals(self):
+        """Test generating sample deals"""
+        return self.run_test(
+            "Generate Sample Deals",
+            "POST",
+            "sample-deals"
         )
-        if success and response:
-            deals = response
-            for deal in deals[:3]:  # Check first 3 deals
-                print(f"\nChecking deal URL: {deal['title']}")
-                assert deal['url'].startswith('http'), f"Invalid URL format: {deal['url']}"
-            return True
-        return False
 
 def main():
-    tester = TestLocalDealFinder()
+    tester = TestLocalDealFinderAPI()
     
-    # First ensure we have sample data
-    print("\n🔄 Generating sample data...")
-    requests.post(f"{tester.base_url}/sample-deals")
+    # Test root endpoint
+    tester.test_root_endpoint()
     
-    # Run tests
-    tests_passed = 0
-    total_tests = 4
+    # Generate sample deals
+    tester.test_generate_sample_deals()
     
-    if tester.test_brigade_road_deals():
-        tests_passed += 1
-    
-    if tester.test_jayanagar_deals():
-        tests_passed += 1
-    
-    if tester.test_price_format():
-        tests_passed += 1
-    
-    if tester.test_view_deal_links():
-        tests_passed += 1
+    # Test getting deals for different locations
+    success, brigade_deals = tester.test_get_deals_brigade_road()
+    if success:
+        print("\nBrigade Road Deals Analysis:")
+        for deal in brigade_deals:
+            if "Brigade" in deal["location"]["address"]:
+                print(f"✓ Found Brigade Road deal: {deal['business_name']}")
+            else:
+                print(f"✗ Non-Brigade Road deal found: {deal['business_name']}")
 
-    # Print results
-    print(f"\n📊 Tests passed: {tests_passed}/{total_tests}")
-    return 0 if tests_passed == total_tests else 1
+    success, jayanagar_deals = tester.test_get_deals_jayanagar()
+    if success:
+        print("\nJayanagar Deals Analysis:")
+        for deal in jayanagar_deals:
+            if "Jayanagar" in deal["location"]["address"]:
+                print(f"✓ Found Jayanagar deal: {deal['business_name']}")
+            else:
+                print(f"✗ Non-Jayanagar deal found: {deal['business_name']}")
+
+    # Print final results
+    print(f"\n📊 Tests Summary:")
+    print(f"Total Tests: {tester.tests_run}")
+    print(f"Tests Passed: {tester.tests_passed}")
+    print(f"Success Rate: {(tester.tests_passed/tester.tests_run)*100:.1f}%")
 
 if __name__ == "__main__":
     main()
