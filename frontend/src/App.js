@@ -83,8 +83,30 @@ function App() {
       
       const { lat, lon } = data[0];
       setLocation({ lat, lng: lon });
+      
+      // First, scrape deals for this location using Firecrawl API
+      setError(null);
+      setLoading(true);
+      
+      try {
+        // Call the scrape-deals endpoint with the location information
+        const scrapeResponse = await fetch(`${BACKEND_URL}/api/scrape-deals?location=${encodeURIComponent(locationInput)}&lat=${lat}&lng=${lon}&category=${filter.category}`, {
+          method: 'POST',
+        });
+        
+        if (!scrapeResponse.ok) {
+          throw new Error("Failed to scrape deals for this location");
+        }
+        
+        // Now fetch the deals
+        await fetchDeals();
+      } catch (scrapeErr) {
+        console.error("Error scraping deals:", scrapeErr);
+        setError("Failed to find deals for this location. Please try again or try a different location.");
+        setLoading(false);
+      }
+      
       setIsGeocoding(false);
-      fetchDeals();
     } catch (err) {
       console.error("Geocoding error:", err);
       setError("Failed to find coordinates for this location. Please try again.");
