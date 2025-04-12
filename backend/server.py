@@ -321,22 +321,26 @@ async def find_local_stores(location_name=None, lat=None, lng=None, category=Non
     """
     stores = []
     
-    # Determine if we're looking for Bengaluru or San Francisco area
-    is_bengaluru = False
+    # Check for specific Bengaluru neighborhoods
+    is_jayanagar = False
+    is_brigade_road = False
     is_san_francisco = False
     
     if location_name:
-        is_bengaluru = "bengaluru" in location_name.lower() or "bangalore" in location_name.lower() or "jayanagar" in location_name.lower()
+        is_jayanagar = "jayanagar" in location_name.lower()
+        is_brigade_road = "brigade" in location_name.lower() or "brigade road" in location_name.lower()
         is_san_francisco = "san francisco" in location_name.lower() or "sf" in location_name.lower()
     elif lat and lng:
-        # More precise coordinate-based detection for Bengaluru (Jayanagar area)
-        is_bengaluru = 12.92 <= float(lat) <= 12.95 and 77.57 <= float(lng) <= 77.59
-        # More precise coordinate-based detection for San Francisco
+        # Jayanagar area
+        is_jayanagar = 12.93 <= float(lat) <= 12.94 and 77.58 <= float(lng) <= 77.59
+        # Brigade Road area
+        is_brigade_road = 12.96 <= float(lat) <= 12.97 and 77.60 <= float(lng) <= 77.61
+        # San Francisco
         is_san_francisco = 37.7 <= float(lat) <= 37.8 and -122.5 <= float(lng) <= -122.3
     
-    # Define some stores for Bengaluru (Jayanagar)
-    if is_bengaluru:
-        bengaluru_stores = [
+    # Define stores for Jayanagar
+    if is_jayanagar:
+        jayanagar_stores = [
             {
                 "name": "Zudio Jayanagar",
                 "category": "retail",
@@ -364,13 +368,51 @@ async def find_local_stores(location_name=None, lat=None, lng=None, category=Non
             {
                 "name": "Dominos Pizza Jayanagar",
                 "category": "restaurant",
-                "address": "Brigade Rd, Jayanagar 2nd Block, Bengaluru",
+                "address": "30th Cross, Jayanagar 2nd Block, Bengaluru",
                 "lat": 12.9395,
                 "lng": 77.5840,
                 "website": "https://www.dominos.co.in/offers"
             }
         ]
-        stores.extend(bengaluru_stores)
+        stores.extend(jayanagar_stores)
+    
+    # Define stores for Brigade Road
+    if is_brigade_road:
+        brigade_road_stores = [
+            {
+                "name": "Lifestyle Brigade Road",
+                "category": "retail",
+                "address": "51, Brigade Road, Bengaluru",
+                "lat": 12.9720,
+                "lng": 77.6081,
+                "website": "https://www.lifestylestores.com/in/en/c/sale"
+            },
+            {
+                "name": "Adidas Store Brigade Road",
+                "category": "retail",
+                "address": "42, Brigade Road, Bengaluru",
+                "lat": 12.9723,
+                "lng": 77.6078,
+                "website": "https://www.adidas.co.in/sale"
+            },
+            {
+                "name": "Westside Brigade Road",
+                "category": "retail",
+                "address": "28, Brigade Road, Bengaluru",
+                "lat": 12.9728,
+                "lng": 77.6075,
+                "website": "https://www.westside.com/collections/the-sale"
+            },
+            {
+                "name": "Hard Rock Cafe",
+                "category": "restaurant",
+                "address": "33, Brigade Road, Bengaluru",
+                "lat": 12.9725,
+                "lng": 77.6079,
+                "website": "https://www.hardrockcafe.com/location/bengaluru/specials.aspx"
+            }
+        ]
+        stores.extend(brigade_road_stores)
     
     # Define some stores for San Francisco
     if is_san_francisco:
