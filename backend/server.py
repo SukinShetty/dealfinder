@@ -775,8 +775,24 @@ async def get_deals(
                 deal_lng = deal["location"]["lng"]
                 distance = calculate_distance(lat, lng, deal_lat, deal_lng)
                 
-                if distance <= radius:
-                    # Add distance to deal
+                # If we're in Brigade Road, prioritize Brigade Road deals within 1 mile
+                if is_brigade_road and "Brigade" in deal["location"]["address"]:
+                    # Only include Brigade Road deals that are very close
+                    if distance <= 1.0:
+                        deal["distance"] = round(distance, 2)
+                        filtered_deals.append(deal)
+                # If we're in Jayanagar, prioritize Jayanagar deals within 1 mile
+                elif is_jayanagar and "Jayanagar" in deal["location"]["address"]:
+                    if distance <= 1.0:
+                        deal["distance"] = round(distance, 2)
+                        filtered_deals.append(deal)
+                # For San Francisco or general case, use the specified radius
+                elif is_san_francisco and "San Francisco" in deal["location"]["address"]:
+                    if distance <= radius:
+                        deal["distance"] = round(distance, 2)
+                        filtered_deals.append(deal)
+                # General case for any other locations
+                elif distance <= radius:
                     deal["distance"] = round(distance, 2)
                     filtered_deals.append(deal)
             
