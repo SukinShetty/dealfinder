@@ -732,7 +732,8 @@ async def get_deals(
     lng: float = Query(None, description="User's longitude"),
     category: Optional[str] = Query(None, description="Filter by category (retail, restaurant)"),
     radius: float = Query(5.0, description="Search radius in miles, default 5 miles"),
-    min_discount: float = Query(15.0, description="Minimum discount percentage")
+    min_discount: float = Query(15.0, description="Minimum discount percentage"),
+    location: Optional[str] = Query(None, description="Location name for more precise filtering")
 ):
     """
     Get deals filtered by location, category, and discount percentage
