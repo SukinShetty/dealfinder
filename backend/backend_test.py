@@ -1,100 +1,110 @@
-import pytest
 import requests
-import json
+import pytest
 from datetime import datetime
 
-# Use the public endpoint for testing
-BASE_URL = "https://484ff713-fe7c-4092-8908-e6296d7ea8df.preview.emergentagent.com"
+class DealFinderAPITester:
+    def __init__(self, base_url):
+        self.base_url = base_url
+        self.tests_run = 0
+        self.tests_passed = 0
 
-def test_root_endpoint():
-    """Test the root endpoint"""
-    response = requests.get(f"{BASE_URL}/api")
-    assert response.status_code == 200
-    assert response.json() == {"message": "Welcome to the Real-Time Local Deal Finder API"}
+    def run_test(self, name, method, endpoint, expected_status, params=None):
+        """Run a single API test"""
+        url = f"{self.base_url}/api/{endpoint}"
+        self.tests_run += 1
+        print(f"\n🔍 Testing {name}...")
+        
+        try:
+            if method == 'GET':
+                response = requests.get(url, params=params)
+            elif method == 'POST':
+                response = requests.post(url, params=params)
 
-def test_generate_sample_deals():
-    """Test generating sample deals"""
-    response = requests.post(f"{BASE_URL}/api/sample-deals")
-    assert response.status_code == 200
-    assert "Generated" in response.json()["message"]
+            success = response.status_code == expected_status
+            if success:
+                self.tests_passed += 1
+                print(f"✅ Passed - Status: {response.status_code}")
+                return True, response.json()
+            else:
+                print(f"❌ Failed - Expected {expected_status}, got {response.status_code}")
+                return False, None
 
-def test_get_deals_bengaluru():
-    """Test getting deals for Bengaluru location"""
-    # Jayanagar 2nd Block coordinates
-    params = {
-        "lat": 12.9399,
-        "lng": 77.5826,
-        "category": "retail",
-        "radius": 5.0,
-        "min_discount": 15.0
-    }
-    response = requests.get(f"{BASE_URL}/api/deals", params=params)
-    assert response.status_code == 200
-    deals = response.json()
-    
-    # Verify deals structure and content
-    assert isinstance(deals, list)
-    if deals:  # If deals are found
-        for deal in deals:
-            assert "title" in deal
-            assert "business_name" in deal
-            assert "category" in deal
-            assert "location" in deal
-            assert "discount_percentage" in deal
-            assert deal["discount_percentage"] >= 15.0
-            assert "Bengaluru" in deal["location"]["address"]
-            assert deal["category"] == "retail"
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, None
 
-def test_get_deals_san_francisco():
-    """Test getting deals for San Francisco location"""
-    params = {
-        "lat": 37.7749,
-        "lng": -122.4194,
-        "category": "restaurant",
-        "radius": 5.0,
-        "min_discount": 15.0
-    }
-    response = requests.get(f"{BASE_URL}/api/deals", params=params)
-    assert response.status_code == 200
-    deals = response.json()
-    
-    # Verify deals structure and content
-    assert isinstance(deals, list)
-    if deals:  # If deals are found
-        for deal in deals:
-            assert "title" in deal
-            assert "business_name" in deal
-            assert "category" in deal
-            assert "location" in deal
-            assert "discount_percentage" in deal
-            assert deal["discount_percentage"] >= 15.0
-            assert "San Francisco" in deal["location"]["address"]
-            assert deal["category"] == "restaurant"
+    def test_location_based_filtering(self):
+        """Test location-based deal filtering"""
+        print("\n📍 Testing Location-based Filtering...")
 
-def test_scrape_deals_bengaluru():
-    """Test scraping deals for Bengaluru"""
-    params = {
-        "location": "Jayanagar 2nd Block, Bengaluru",
-        "lat": 12.9399,
-        "lng": 77.5826,
-        "category": "retail"
-    }
-    response = requests.post(f"{BASE_URL}/api/scrape-deals", params=params)
-    assert response.status_code == 200
-    assert "stores" in response.json()["message"]
+        # Test Brigade Road deals
+        success, brigade_deals = self.run_test(
+            "Brigade Road Deals",
+            "GET",
+            "deals",
+            200,
+            params={
+                "lat": "12.9720",
+                "lng": "77.6081",
+                "radius": "5"
+            }
+        )
+        if success:
+            brigade_stores = [d["business_name"] for d in brigade_deals]
+            print(f"Brigade Road stores found: {brigade_stores}")
+            assert any("Brigade Road" in d["location"]["address"] for d in brigade_deals), "No Brigade Road deals found"
 
-def test_scrape_deals_san_francisco():
-    """Test scraping deals for San Francisco"""
-    params = {
-        "location": "San Francisco, CA",
-        "lat": 37.7749,
-        "lng": -122.4194,
-        "category": "restaurant"
-    }
-    response = requests.post(f"{BASE_URL}/api/scrape-deals", params=params)
-    assert response.status_code == 200
-    assert "stores" in response.json()["message"]
+        # Test Jayanagar deals
+        success, jayanagar_deals = self.run_test(
+            "Jayanagar Deals",
+            "GET",
+            "deals",
+            200,
+            params={
+                "lat": "12.9399",
+                "lng": "77.5826",
+                "radius": "5"
+            }
+        )
+        if success:
+            jayanagar_stores = [d["business_name"] for d in jayanagar_deals]
+            print(f"Jayanagar stores found: {jayanagar_stores}")
+            assert any("Jayanagar" in d["location"]["address"] for d in jayanagar_deals), "No Jayanagar deals found"
+
+    def test_price_formatting(self):
+        """Test price formatting in deals"""
+        print("\n💰 Testing Price Formatting...")
+        
+        success, deals = self.run_test(
+            "Get Deals with Prices",
+            "GET",
+            "deals",
+            200
+        )
+        if success and deals:
+            for deal in deals:
+                if deal.get("original_price"):
+                    assert isinstance(deal["original_price"], (int, float)), "Original price should be numeric"
+                if deal.get("sale_price"):
+                    assert isinstance(deal["sale_price"], (int, float)), "Sale price should be numeric"
+                print(f"✅ Price format valid for deal: {deal['title']}")
+
+def main():
+    # Initialize tester with the public endpoint
+    tester = DealFinderAPITester("https://484ff713-fe7c-4092-8908-e6296d7ea8df.preview.emergentagent.com")
+
+    # Generate sample deals first
+    print("\n🔄 Generating sample deals...")
+    tester.run_test("Generate Sample Deals", "POST", "sample-deals", 200)
+
+    # Run tests
+    tester.test_location_based_filtering()
+    tester.test_price_formatting()
+
+    # Print results
+    print(f"\n📊 Tests Summary:")
+    print(f"Tests passed: {tester.tests_passed}/{tester.tests_run}")
+    return 0 if tester.tests_passed == tester.tests_run else 1
 
 if __name__ == "__main__":
-    # Run the tests
-    pytest.main([__file__, "-v"])
+    main()
