@@ -622,6 +622,76 @@ async def generate_sample_deals():
             "expiration_date": datetime(2025, 4, 25),
             "image_url": "https://images.unsplash.com/photo-1550009158-9ebf69173e03?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
             "url": "https://www2.hm.com/en_in/sale.html"
+        },
+        
+        # Brigade Road Deals
+        {
+            "title": "30% Off on Selected Brands",
+            "description": "Get 30% off on selected premium brands. Limited period offer!",
+            "discount_percentage": 30.0,
+            "business_name": "Lifestyle Brigade Road",
+            "category": "retail",
+            "location": {
+                "lat": 12.9720,
+                "lng": 77.6081,
+                "address": "51, Brigade Road, Bengaluru"
+            },
+            "original_price": 4999.0,
+            "sale_price": 3499.3,
+            "expiration_date": datetime(2025, 5, 20),
+            "image_url": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+            "url": "https://www.lifestylestores.com/in/en/c/sale"
+        },
+        {
+            "title": "Buy 2 Get 1 Free on Footwear",
+            "description": "Purchase any two pairs of shoes and get the third one free. T&C apply.",
+            "discount_percentage": 33.3,
+            "business_name": "Adidas Store Brigade Road",
+            "category": "retail",
+            "location": {
+                "lat": 12.9723,
+                "lng": 77.6078,
+                "address": "42, Brigade Road, Bengaluru"
+            },
+            "original_price": 8999.0,
+            "sale_price": 5999.0,
+            "expiration_date": datetime(2025, 6, 10),
+            "image_url": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+            "url": "https://www.adidas.co.in/sale"
+        },
+        {
+            "title": "Flat 40% Off on Men's Shirts",
+            "description": "Enjoy 40% discount on all men's formal and casual shirts.",
+            "discount_percentage": 40.0,
+            "business_name": "Westside Brigade Road",
+            "category": "retail",
+            "location": {
+                "lat": 12.9728,
+                "lng": 77.6075,
+                "address": "28, Brigade Road, Bengaluru"
+            },
+            "original_price": 2499.0,
+            "sale_price": 1499.4,
+            "expiration_date": datetime(2025, 5, 15),
+            "image_url": "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+            "url": "https://www.westside.com/collections/the-sale"
+        },
+        {
+            "title": "Happy Hour Deal: 25% Off on Food",
+            "description": "Get 25% off on all food items during happy hours (4 PM to 7 PM).",
+            "discount_percentage": 25.0,
+            "business_name": "Hard Rock Cafe",
+            "category": "restaurant",
+            "location": {
+                "lat": 12.9725,
+                "lng": 77.6079,
+                "address": "33, Brigade Road, Bengaluru"
+            },
+            "original_price": 2000.0,
+            "sale_price": 1500.0,
+            "expiration_date": datetime(2025, 5, 30),
+            "image_url": "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+            "url": "https://www.hardrockcafe.com/location/bengaluru/specials.aspx"
         }
     ]
     
