@@ -273,7 +273,7 @@ async def find_local_stores(location_name=None, lat=None, lng=None, category=Non
                 "address": "11th Main Rd, 2nd Block, Jayanagar, Bengaluru",
                 "lat": 12.9399039,
                 "lng": 77.5826382,
-                "website": "https://www.tatacliq.com/zudio"
+                "website": "https://www.tatacliq.com/zudio/c-msh1451/offers"
             },
             {
                 "name": "Levi's Store Jayanagar",
@@ -281,7 +281,7 @@ async def find_local_stores(location_name=None, lat=None, lng=None, category=Non
                 "address": "30th Cross, Jayanagar 2nd Block, Bengaluru",
                 "lat": 12.9385,
                 "lng": 77.5832,
-                "website": "https://www.levi.in/sale"
+                "website": "https://www.levi.in/discount/sale"
             },
             {
                 "name": "H&M Jayanagar",
