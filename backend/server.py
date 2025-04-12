@@ -761,12 +761,15 @@ async def get_deals(
             
             for deal in serialized_deals:
                 # Only include deals from the correct neighborhood
-                if is_jayanagar and "Jayanagar" not in deal["location"]["address"]:
-                    continue
-                if is_brigade_road and "Brigade Road" not in deal["location"]["address"]:
-                    continue
-                if is_san_francisco and "San Francisco" not in deal["location"]["address"]:
-                    continue
+                if is_jayanagar:
+                    if "Jayanagar" not in deal["location"]["address"]:
+                        continue
+                elif is_brigade_road:
+                    if "Brigade Road" not in deal["location"]["address"]:
+                        continue
+                elif is_san_francisco:
+                    if "San Francisco" not in deal["location"]["address"]:
+                        continue
                     
                 deal_lat = deal["location"]["lat"]
                 deal_lng = deal["location"]["lng"]
