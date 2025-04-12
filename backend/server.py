@@ -695,9 +695,6 @@ async def generate_sample_deals():
         }
     ]
     
-    # Clear ALL existing deals first
-    await db.deals.delete_many({})
-    
     # Insert sample deals
     for deal in sample_deals:
         deal_obj = Deal(**deal)
