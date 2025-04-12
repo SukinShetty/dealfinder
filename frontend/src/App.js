@@ -66,6 +66,8 @@ function App() {
     
     try {
       setIsGeocoding(true);
+      setError(null);
+      
       // Using the OpenStreetMap Nominatim API for geocoding (free and no API key required)
       const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationInput)}&limit=1`);
       
@@ -85,13 +87,15 @@ function App() {
       setLocation({ lat, lng: lon });
       
       // First, scrape deals for this location using Firecrawl API
-      setError(null);
       setLoading(true);
+      setIsGeocoding(false);
       
       try {
         // Call the scrape-deals endpoint with the location information
         const scrapeResponse = await fetch(`${BACKEND_URL}/api/scrape-deals?location=${encodeURIComponent(locationInput)}&lat=${lat}&lng=${lon}&category=${filter.category}`, {
           method: 'POST',
+          // Set a longer timeout for this request
+          signal: AbortSignal.timeout(30000) // 30 second timeout
         });
         
         if (!scrapeResponse.ok) {
@@ -102,15 +106,21 @@ function App() {
         await fetchDeals();
       } catch (scrapeErr) {
         console.error("Error scraping deals:", scrapeErr);
-        setError("Failed to find deals for this location. Please try again or try a different location.");
+        
+        // Check if it's a timeout error
+        if (scrapeErr.name === "TimeoutError" || scrapeErr.name === "AbortError") {
+          setError("The request took too long. The server might be busy. Please try again or try a different location.");
+        } else {
+          setError("Failed to find deals for this location. Please try again or try a different location.");
+        }
+        
         setLoading(false);
       }
-      
-      setIsGeocoding(false);
     } catch (err) {
       console.error("Geocoding error:", err);
       setError("Failed to find coordinates for this location. Please try again.");
       setIsGeocoding(false);
+      setLoading(false);
     }
   };
 
